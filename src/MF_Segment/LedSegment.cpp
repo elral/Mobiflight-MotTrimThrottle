@@ -22,7 +22,7 @@ void Add(int dataPin, int csPin, int clkPin, int numDevices, int brightness)
 		return;
 	}
   ledSegments[ledSegmentsRegistered] = new (allocateMemory(sizeof(MFSegments))) MFSegments;
-  ledSegments[ledSegmentsRegistered]->attach(dataPin, csPin, clkPin, numDevices, brightness); // lc is our object
+  ledSegments[ledSegmentsRegistered]->attach();
   ledSegmentsRegistered++;
 #ifdef DEBUG2CMDMESSENGER
   cmdMessenger.sendCmd(kStatus, F("Added Led Segment"));
@@ -41,20 +41,11 @@ void Clear()
 #endif
 }
 
-void PowerSave(bool state)
-{
-  for (int i = 0; i != ledSegmentsRegistered; ++i)
-  {
-    ledSegments[i]->powerSavingMode(state);
-  }
-}
-
 void OnInitModule()
 {
   int module = cmdMessenger.readInt16Arg();
   int subModule = cmdMessenger.readInt16Arg();
   int brightness = cmdMessenger.readInt16Arg();
-  ledSegments[module]->setBrightness(subModule, brightness);
   setLastCommandMillis();
 }
 
@@ -74,7 +65,12 @@ void OnSetModuleBrightness()
   int module = cmdMessenger.readInt16Arg();
   int subModule = cmdMessenger.readInt16Arg();
   int brightness = cmdMessenger.readInt16Arg();
-  ledSegments[module]->setBrightness(subModule, brightness);
   setLastCommandMillis();
 }
+
+uint16_t GetSetpoint(uint8_t _module)
+{
+  return ledSegments[_module]->getSetpoint();
+}
+
 }   // end of namespace LedSegment

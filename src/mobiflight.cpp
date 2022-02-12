@@ -32,7 +32,7 @@ void SetPowerSavingMode(bool state)
   // disable the lights ;)
   powerSavingMode = state;
 //  Output::PowerSave(state);     // why is this uncommeted in the main branch??
-  LedSegment::PowerSave(state);
+// Maybe there is one for the stepper needed....
 #ifdef DEBUG2CMDMESSENGER
   if (state)
     cmdMessenger.sendCmd(kStatus, F("On"));
@@ -76,6 +76,9 @@ void setup()
   cmdMessenger.printLfCr();
   ResetBoard();
 
+  Stepper::Add(2, 3, 2, 3, 0);            // Stepper TrimWheel
+  Stepper::Add(5, 6, 5, 6, 0);            // Stepper Throttle
+
 // Time Gap between Inputs, do not read at the same loop
   lastButtonUpdate = millis() + 0;
   lastEncoderUpdate = millis();           // encoders will be updated every 1ms
@@ -102,7 +105,6 @@ void loop()
       lastButtonUpdate = millis();
       Button::read();
     }
-    Stepper::update();
     if (millis() - lastAnalogRead >= MF_ANALOGREAD_DELAY_MS)
     {
       lastAnalogRead = millis();
@@ -113,5 +115,13 @@ void loop()
       lastAnalogAverage = millis();
       Analog::readAverage();
     }
+
+    Stepper::update();
+    
+// 1,0,0,12345678,255;  Modul 0 = setpoint TrimWheel -> LedSegment::GetSetpoint(0)
+// 1,1,0,12345678,255;  Modul 1 = setpoint Throttle  -> LedSegment::GetSetpoint(1)
+// 3,0,800;             Stepper 0 relative  Stepper::OnSetRelative() gets still valie from CMDMessenger!! additional function required to keep receiving from UI??
+// 3,1,-800;            Stepper 1 relative
+
   }
 }

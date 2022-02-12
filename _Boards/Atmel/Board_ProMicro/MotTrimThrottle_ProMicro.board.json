@@ -3,7 +3,7 @@
   "AvrDudeSettings": {
     "BaudRate": "57600",
     "Device": "atmega32u4",
-    "FirmwareBaseName": "mobiflight_micro",
+    "FirmwareBaseName": "mottrimthrot_micro",
     "Programmer": "avr109",
     "Timeout": 15000
   },

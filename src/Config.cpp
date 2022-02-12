@@ -28,7 +28,6 @@ char          serial[MEM_LEN_SERIAL] = MOBIFLIGHT_SERIAL;
 char          name[MEM_LEN_NAME] = MOBIFLIGHT_NAME;
 const int     MEM_LEN_CONFIG = MEMLEN_CONFIG;
 char          nameBuffer[MEM_LEN_CONFIG] = "";
-uint16_t      configLength = 0;
 boolean       configActivated = false;
 
 void readConfig();
@@ -42,7 +41,6 @@ void loadConfig()
 #ifdef DEBUG2CMDMESSENGER
   cmdMessenger.sendCmd(kStatus, F("Load config"));
 #endif
-  configLength = sizeof(configuration);
   readConfig();
   configActivated = true;
 }
@@ -119,8 +117,6 @@ bool readEndCommandFromFlash(uint16_t *addreeprom)
 
 void readConfig()
 {
-  if (configLength == 0)                                          // do nothing if no config is available   
-    return;
   uint16_t addreeprom = MEM_OFFSET_CONFIG;                        // define first memory location where config is saved in EEPROM
   uint16_t addrbuffer = 0;                                        // and start with first memory location from nameBuffer
   char params[6] = "";
@@ -128,7 +124,7 @@ void readConfig()
   bool copy_success = true;                                       // will be set to false if copying input names to nameBuffer exceeds array dimensions
                                                                   // not required anymore when pins instead of names are transferred to the UI
 
-  if (command == 0)                                               // just to be sure, configLength should also be 0
+  if (command == 0)                                               // just to be sure
     return;
 
   do                                                              // go through the EEPROM until it is NULL terminated
@@ -158,7 +154,7 @@ void readConfig()
       copy_success = readEndCommandFromFlash(&addreeprom);        // check EEPROM until end of name
       break;
 #endif
-
+/*
 #if MF_STEPPER_SUPPORT == 1
     case kTypeStepper:
       params[0] = readUintFromFlash(&addreeprom);                 // get the Pin1 number
@@ -170,7 +166,7 @@ void readConfig()
       copy_success = readEndCommandFromFlash(&addreeprom);        // check EEPROM until end of name
       break;
 #endif
-
+*/
 #if MF_ANALOG_SUPPORT == 1
     case kTypeAnalogInput:
       params[0] = readUintFromFlash(&addreeprom);                 // get the pin number
@@ -195,9 +191,10 @@ void OnGetConfig()
 {
   setLastCommandMillis();
   cmdMessenger.sendCmdStart(kInfo);
-  for (uint16_t i = 1; i < configLength; i++)
+  cmdMessenger.sendCmdArg("");
+  for (uint16_t i = 0; i < sizeof(configuration) - 1; i++)        // Do not consider the terminating NULL from string -> '-1'
   {
-    cmdMessenger.sendArg(pgm_read_byte_near(configuration + i));
+    cmdMessenger.sendArg((char)pgm_read_byte_near(configuration + i));
   }
   cmdMessenger.sendCmdEnd();
 }

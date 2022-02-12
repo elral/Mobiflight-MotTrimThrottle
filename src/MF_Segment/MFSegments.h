@@ -9,22 +9,16 @@
 #pragma once
 
 #include <Arduino.h>
-#include <LedControl.h>
-
-/////////////////////////////////////////////////////////////////////
-/// \class MFSegments MFSegments.h <MFSegments.h>
 class MFSegments
 {
 public:
     MFSegments();
     void display(byte module, char *string, byte points, byte mask, bool convertPoints = false);
-    void attach(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness);
+    void attach();
     void detach();
-    void test();
-    void powerSavingMode(bool state);
-    void setBrightness(byte module, byte value);
+    uint16_t getSetpoint();
 
 private:
-    LedControl  _ledControl;
-    byte        _moduleCount;
+    bool        _initialized;
+    uint16_t    _setpoint;
 };
