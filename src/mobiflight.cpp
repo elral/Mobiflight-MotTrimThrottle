@@ -79,8 +79,11 @@ void setup()
   cmdMessenger.printLfCr();
   ResetBoard();
 
-  Stepper::Add(2, 3, 2, 3, 0);            // Stepper TrimWheel
-  Stepper::Add(5, 6, 5, 6, 0);            // Stepper Throttle
+  Stepper::Add(2, 3, 2, 3, 0);            // add and initialize Stepper TrimWheel
+  Stepper::Add(5, 6, 5, 6, 0);            // add and initialize Stepper Throttle
+
+  digitalWrite(4,1);                      // disable stepper on startup
+  digitalWrite(7,1);                      // disable stepper on startup
 
 // Time Gap between Inputs, do not read at the same loop
   lastButtonUpdate = millis() + 0;
@@ -121,14 +124,22 @@ void loop()
 
     Stepper::update();
     
-    setPoint = SetpointStepper::GetSetpoint(TrimWheel);   // range is -500 ... 500
-    actualValue = Analog::getActualValue(Throttle);       // range is -512 ... 511 for 270°
+    setPoint = SetpointStepper::GetSetpoint(TrimWheel);     // range is -500 ... 500
+    actualValue = Analog::getActualValue(TrimWheel);        // range is -512 ... 511 for 270°
 actualValue = 0; // just for testing, no pot connected for now
-    deltaSteps = setPoint - actualValue;                  // Stepper: 800 steps for 360° -> 600 steps for 270°
-    deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough!
-    Stepper::SetRelative(TrimWheel, deltaSteps);
+    deltaSteps = setPoint - actualValue;                    // Stepper: 800 steps for 360° -> 600 steps for 270°
+    if (abs(deltaSteps) > 100)
+      deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough! But ONLY for bigger steps, otherwise setpoint will not be reached
+    Stepper::SetRelative(TrimWheel, deltaSteps);            // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
 
-// The same for the Throttle!!
+/*    Uncomment after testing for motorized throttle
+    setPoint = SetpointStepper::GetSetpoint(Throttle);      // range is -500 ... 500
+    actualValue = Analog::getActualValue(Throttle);         // range is -512 ... 511 for 270°
+    deltaSteps = setPoint - actualValue;                    // Stepper: 800 steps for 360° -> 600 steps for 270°
+    if (abs(deltaSteps) > 100)
+      deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough! But ONLY for bigger steps, otherwise setpoint will not be reached
+    Stepper::SetRelative(Throttle, deltaSteps);             // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+*/
   }
 }
 

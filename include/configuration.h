@@ -11,7 +11,7 @@ const char configuration[] PROGMEM =
 /*
 const char configuration[] PROGMEM = 
 {   "9.2.3.2.3.0.StepperTrim:"
-    "23.4.enableTrim:"
+    "3.4.enableTrim:"
     "9.5.6.5.6.0.StepperThrottle:"
     "3.7.enableThrottle:"
     "11.14.5.TrimWheel:"
