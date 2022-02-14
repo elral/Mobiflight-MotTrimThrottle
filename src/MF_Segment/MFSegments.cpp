@@ -13,11 +13,15 @@ void MFSegments::display(byte module, char *string, byte points, byte mask, bool
 {
   if (!_initialized)
     return;
-  _setpoint = atoi(string);
-Serial.println(_setpoint);
+  _setpoint = atoi(string);         // range is -100 ... 0 ... +100
+  if (_setpoint < -100)
+    _setpoint = -100;
+  if (_setpoint > 100)
+    _setpoint = 100;
+  _setpoint *= 5;                   // range is -500 ... 500
 }
 
-uint16_t MFSegments::getSetpoint()
+int16_t MFSegments::getSetpoint()
 {
   if (!_initialized)
     return;

@@ -68,7 +68,7 @@ void OnSetModuleBrightness()
   setLastCommandMillis();
 }
 
-uint16_t GetSetpoint(uint8_t _module)
+int16_t GetSetpoint(uint8_t _module)
 {
   return ledSegments[_module]->getSetpoint();
 }

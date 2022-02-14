@@ -75,6 +75,14 @@ void OnSetRelative()
   setLastCommandMillis();
 }
 
+void SetRelative(uint8_t _stepper, int16_t _pos)
+{
+  if (_stepper >= steppersRegistered)
+    return;
+  steppers[_stepper]->move(_pos);
+  setLastCommandMillis();
+}
+
 void OnReset()
 {
   int stepper = cmdMessenger.readInt16Arg();

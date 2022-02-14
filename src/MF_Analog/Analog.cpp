@@ -53,6 +53,11 @@ void read()
     }
 }
 
+int16_t getActualValue(uint8_t channel)
+{
+    return analog[channel]->getActualValue();
+}
+
 void readAverage()
 {
     for (int i = 0; i != analogRegistered; i++)

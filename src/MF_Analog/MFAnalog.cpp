@@ -31,6 +31,11 @@ void MFAnalog::readBuffer(){                                // read ADC and calc
   ADC_Average_Pointer &= (ADC_MAX_AVERAGE-1);               // limit max. values for floating average
 }
 
+int16_t MFAnalog::getActualValue()
+{
+  return (ADC_Average_Total>>ADC_MAX_AVERAGE_LOG2) - 512;   // transfer 0 ... 1024 to -512 ... 511
+}
+
 void MFAnalog::attachHandler(analogEvent newHandler)
 {
   _handler = newHandler;

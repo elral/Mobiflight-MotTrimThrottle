@@ -22,8 +22,6 @@ uint32_t lastAnalogAverage = 0;
 uint32_t lastAnalogRead = 0;
 
 
-
-
 // ************************************************************
 // Power saving
 // ************************************************************
@@ -66,6 +64,11 @@ void ResetBoard()
   _restoreName();
 }
 
+enum {
+  TrimWheel,
+  Throttle
+};
+
 // ************************************************************
 // Setup
 // ************************************************************
@@ -86,6 +89,9 @@ void setup()
   lastAnalogRead = millis() + 4;
 }
 
+uint16_t setPoint = 0;
+uint16_t actualValue = 0;
+int16_t  deltaSteps = 0;
 // ************************************************************
 // Loop function
 // ************************************************************
@@ -95,9 +101,6 @@ void loop()
   cmdMessenger.feedinSerialData();
   updatePowerSaving();
 
-  // if config has been reset and still is not activated
-  // do not perform updates
-  // to prevent mangling input for config (shared buffers)
   if (getStatusConfig())
   {
     if (millis() - lastButtonUpdate >= MF_BUTTON_DEBOUNCE_MS)
@@ -118,10 +121,19 @@ void loop()
 
     Stepper::update();
     
+    setPoint = LedSegment::GetSetpoint(TrimWheel);        // range is -500 ... 500
+    actualValue = Analog::getActualValue(Throttle);       // range is -512 ... 511 for 270°
+actualValue = 0; // just for testing, no pot connected for now
+    deltaSteps = setPoint - actualValue;                  // Stepper: 800 steps for 360° -> 600 steps for 270°
+    deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough!
+    Stepper::SetRelative(TrimWheel, deltaSteps);
+
+// The same for the Throttle!!
+  }
+}
+
+
 // 1,0,0,12345678,255;  Modul 0 = setpoint TrimWheel -> LedSegment::GetSetpoint(0)
 // 1,1,0,12345678,255;  Modul 1 = setpoint Throttle  -> LedSegment::GetSetpoint(1)
 // 3,0,800;             Stepper 0 relative  Stepper::OnSetRelative() gets still valie from CMDMessenger!! additional function required to keep receiving from UI??
 // 3,1,-800;            Stepper 1 relative
-
-  }
-}
