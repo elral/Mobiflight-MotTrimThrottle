@@ -2,14 +2,14 @@
 //
 // Copyright (C) 2013-2021
 #include <Arduino.h>
-#include "MFSegments.h"
+#include "MFSetpointStepper.h"
 
-MFSegments::MFSegments()
+MFSetpointStepper::MFSetpointStepper()
 {
   _initialized = false;
 }
 
-void MFSegments::display(byte module, char *string, byte points, byte mask, bool convertPoints)
+void MFSetpointStepper::setSetpoint(byte module, char *string, byte points, byte mask, bool convertPoints)
 {
   if (!_initialized)
     return;
@@ -21,19 +21,19 @@ void MFSegments::display(byte module, char *string, byte points, byte mask, bool
   _setpoint *= 5;                   // range is -500 ... 500
 }
 
-int16_t MFSegments::getSetpoint()
+int16_t MFSetpointStepper::getSetpoint()
 {
   if (!_initialized)
     return;
   return _setpoint;
 }
 
-void MFSegments::attach()
+void MFSetpointStepper::attach()
 {
   _initialized = true;
 }
 
-void MFSegments::detach()
+void MFSetpointStepper::detach()
 {
   _initialized = false;
 }

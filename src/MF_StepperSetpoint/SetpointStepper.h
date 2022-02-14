@@ -1,6 +1,6 @@
 #pragma once
 
-namespace LedSegment
+namespace SetpointStepper
 {
 void Add(int dataPin, int csPin, int clkPin, int numDevices, int brightness);
 void Clear();

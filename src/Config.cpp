@@ -7,7 +7,7 @@
 #include "configuration.h"
 #include "Output.h"
 #include "Analog.h"
-#include "LedSegment.h"
+#include "SetpointStepper.h"
 #include "Stepper.h"
 
 // The build version comes from an environment variable
@@ -150,7 +150,7 @@ void readConfig()
       params[2] = readUintFromFlash(&addreeprom);                 // get the Pin CLK number
       params[3] = readUintFromFlash(&addreeprom);                 // get the brightness
       params[4] = readUintFromFlash(&addreeprom);                 // get the number of modules
-      LedSegment::Add(params[0], params[1], params[2], params[4], params[3]);
+      SetpointStepper::Add(params[0], params[1], params[2], params[4], params[3]);
       copy_success = readEndCommandFromFlash(&addreeprom);        // check EEPROM until end of name
       break;
 #endif

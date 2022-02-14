@@ -6,7 +6,7 @@
 #include "Button.h"
 #include "Analog.h"
 #include "Output.h"
-#include "LedSegment.h"
+#include "SetpointStepper.h"
 #include "Stepper.h"
 
 CmdMessenger cmdMessenger = CmdMessenger(Serial);
@@ -22,8 +22,8 @@ void attachCommandCallbacks()
   cmdMessenger.attach(OnUnknownCommand);
 
 
-  cmdMessenger.attach(kInitModule, LedSegment::OnInitModule);
-  cmdMessenger.attach(kSetModule, LedSegment::OnSetModule);
+  cmdMessenger.attach(kInitModule, SetpointStepper::OnInitModule);
+  cmdMessenger.attach(kSetModule, SetpointStepper::OnSetModule);
   cmdMessenger.attach(kSetPin, Output::OnSet);
   cmdMessenger.attach(kSetStepper, Stepper::OnSetRelative);
   cmdMessenger.attach(kResetStepper, Stepper::OnReset);

@@ -2,11 +2,11 @@
 #pragma once
 
 #include <Arduino.h>
-class MFSegments
+class MFSetpointStepper
 {
 public:
-    MFSegments();
-    void display(byte module, char *string, byte points, byte mask, bool convertPoints = false);
+    MFSetpointStepper();
+    void setSetpoint(byte module, char *string, byte points, byte mask, bool convertPoints = false);
     void attach();
     void detach();
     int16_t getSetpoint();

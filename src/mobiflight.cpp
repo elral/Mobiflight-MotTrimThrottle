@@ -6,7 +6,7 @@
 #include "Button.h"
 #include "Analog.h"
 #include "Output.h"
-#include "LedSegment.h"
+#include "SetpointStepper.h"
 #include "Stepper.h"
 
 
@@ -121,7 +121,7 @@ void loop()
 
     Stepper::update();
     
-    setPoint = LedSegment::GetSetpoint(TrimWheel);        // range is -500 ... 500
+    setPoint = SetpointStepper::GetSetpoint(TrimWheel);   // range is -500 ... 500
     actualValue = Analog::getActualValue(Throttle);       // range is -512 ... 511 for 270°
 actualValue = 0; // just for testing, no pot connected for now
     deltaSteps = setPoint - actualValue;                  // Stepper: 800 steps for 360° -> 600 steps for 270°

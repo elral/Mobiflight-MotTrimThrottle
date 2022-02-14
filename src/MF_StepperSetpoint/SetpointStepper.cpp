@@ -1,51 +1,53 @@
 #include <Arduino.h>
-#include "MFSegments.h"
+#include "MFSetpointStepper.h"
 #include "allocateMem.h"
 #include "CommandMessenger.h"
-#include "LedSegment.h"
+#include "SetpointStepper.h"
 #include "MFBoards.h"
 
-namespace LedSegment
+namespace SetpointStepper
 {
-MFSegments *ledSegments[MAX_LEDSEGMENTS];
-uint8_t ledSegmentsRegistered = 0;
+MFSetpointStepper *stepperSetpoint[MAX_STEPPER_SETPOINT];
+uint8_t stepperSetpointRegistered = 0;
 
 void Add(int dataPin, int csPin, int clkPin, int numDevices, int brightness)
 {
-  if (ledSegmentsRegistered == MAX_LEDSEGMENTS)
+  if (stepperSetpointRegistered == MAX_STEPPER_SETPOINT)
     return;
 
-  if (!FitInMemory(sizeof(MFSegments)))
+  if (!FitInMemory(sizeof(MFSetpointStepper)))
 	{
 		// Error Message to Connector
-    cmdMessenger.sendCmd(kStatus, F("7Segment does not fit in Memory!"));
+    cmdMessenger.sendCmd(kStatus, F("Stepper Setpoint does not fit in Memory!"));
 		return;
 	}
-  ledSegments[ledSegmentsRegistered] = new (allocateMemory(sizeof(MFSegments))) MFSegments;
-  ledSegments[ledSegmentsRegistered]->attach();
-  ledSegmentsRegistered++;
+  stepperSetpoint[stepperSetpointRegistered] = new (allocateMemory(sizeof(MFSetpointStepper))) MFSetpointStepper;
+  stepperSetpoint[stepperSetpointRegistered]->attach();
+  stepperSetpointRegistered++;
 #ifdef DEBUG2CMDMESSENGER
-  cmdMessenger.sendCmd(kStatus, F("Added Led Segment"));
+  cmdMessenger.sendCmd(kStatus, F("Added Stepper Setpoint"));
 #endif
 }
 
 void Clear()
 {
-  for (int i = 0; i != ledSegmentsRegistered; i++)
+  for (int i = 0; i != stepperSetpointRegistered; i++)
   {
-    ledSegments[i]->detach();
+    stepperSetpoint[i]->detach();
   }
-  ledSegmentsRegistered = 0;
+  stepperSetpointRegistered = 0;
 #ifdef DEBUG2CMDMESSENGER
-  cmdMessenger.sendCmd(kStatus, F("Cleared segments"));
+  cmdMessenger.sendCmd(kStatus, F("Cleared Stepper Setpoint"));
 #endif
 }
 
 void OnInitModule()
 {
+/*
   int module = cmdMessenger.readInt16Arg();
   int subModule = cmdMessenger.readInt16Arg();
   int brightness = cmdMessenger.readInt16Arg();
+*/
   setLastCommandMillis();
 }
 
@@ -56,21 +58,23 @@ void OnSetModule()
   char *value = cmdMessenger.readStringArg();
   uint8_t points = (uint8_t)cmdMessenger.readInt16Arg();
   uint8_t mask = (uint8_t)cmdMessenger.readInt16Arg();
-  ledSegments[module]->display(subModule, value, points, mask);
+  stepperSetpoint[module]->setSetpoint(subModule, value, points, mask);
   setLastCommandMillis();
 }
 
 void OnSetModuleBrightness()
 {
+/*
   int module = cmdMessenger.readInt16Arg();
   int subModule = cmdMessenger.readInt16Arg();
   int brightness = cmdMessenger.readInt16Arg();
+*/
   setLastCommandMillis();
 }
 
 int16_t GetSetpoint(uint8_t _module)
 {
-  return ledSegments[_module]->getSetpoint();
+  return stepperSetpoint[_module]->getSetpoint();
 }
 
 }   // end of namespace LedSegment
