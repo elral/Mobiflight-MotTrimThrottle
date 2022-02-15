@@ -4,8 +4,8 @@ const char configuration[] PROGMEM =
     "3.7.enableThrottle:"
     "11.14.5.TrimWheel:"
     "11.15.5.Throttle:"
-    "4.8.10.9.15.1.TrimSet:"
-    "4.11.13.12.15.1.ThrottleSet:"
+    "6.8.TrimSet:"
+    "6.9.ThrottleSet:"
 };
 
 /*
@@ -18,5 +18,7 @@ const char configuration[] PROGMEM =
     "11.15.5.Throttle:"
     "4.8.10.9.15.1.TrimSet:"
     "4.11.13.12.15.1.ThrottleSet:"
+
+    "6.3.Servo"
 };
 */

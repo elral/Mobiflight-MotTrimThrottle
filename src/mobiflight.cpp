@@ -124,22 +124,20 @@ void loop()
 
     Stepper::update();
     
-    setPoint = SetpointStepper::GetSetpoint(TrimWheel);     // range is -500 ... 500
+    setPoint = SetpointStepper::GetSetpoint(TrimWheel);     // range is -500 ... 500, from UI setpoint must be in +/-0.1%
     actualValue = Analog::getActualValue(TrimWheel);        // range is -512 ... 511 for 270°
-actualValue = 0; // just for testing, no pot connected for now
     deltaSteps = setPoint - actualValue;                    // Stepper: 800 steps for 360° -> 600 steps for 270°
-    if (abs(deltaSteps) > 100)
-      deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough! But ONLY for bigger steps, otherwise setpoint will not be reached
+//    if (abs(deltaSteps) > 100)
+//      deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough! But ONLY for bigger steps, otherwise setpoint will not be reached
     Stepper::SetRelative(TrimWheel, deltaSteps);            // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
 
-/*    Uncomment after testing for motorized throttle
-    setPoint = SetpointStepper::GetSetpoint(Throttle);      // range is -500 ... 500
+    setPoint = SetpointStepper::GetSetpoint(Throttle);      // range is -500 ... 500, from UI setpoint must be in +/-0.1%
     actualValue = Analog::getActualValue(Throttle);         // range is -512 ... 511 for 270°
     deltaSteps = setPoint - actualValue;                    // Stepper: 800 steps for 360° -> 600 steps for 270°
-    if (abs(deltaSteps) > 100)
-      deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough! But ONLY for bigger steps, otherwise setpoint will not be reached
+//    if (abs(deltaSteps) > 100)
+//      deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough! But ONLY for bigger steps, otherwise setpoint will not be reached
     Stepper::SetRelative(Throttle, deltaSteps);             // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-*/
+
   }
 }
 

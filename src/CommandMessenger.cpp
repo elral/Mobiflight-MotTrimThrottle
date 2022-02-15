@@ -21,14 +21,12 @@ void attachCommandCallbacks()
   // Attach callback methods
   cmdMessenger.attach(OnUnknownCommand);
 
-
-//  cmdMessenger.attach(kInitModule, SetpointStepper::OnInitModule);
-//  cmdMessenger.attach(kSetModule, SetpointStepper::OnSetModule);
   cmdMessenger.attach(kSetServo, SetpointStepper::OnSetModule);
   cmdMessenger.attach(kSetPin, Output::OnSet);
   cmdMessenger.attach(kSetStepper, Stepper::OnSetRelative);
   cmdMessenger.attach(kResetStepper, Stepper::OnReset);
   cmdMessenger.attach(kSetZeroStepper, Stepper::OnSetZero);
+
   cmdMessenger.attach(kGetInfo, OnGetInfo);
   cmdMessenger.attach(kGetConfig, OnGetConfig);
   cmdMessenger.attach(kSetConfig, OnSetConfig);
@@ -58,7 +56,4 @@ void setLastCommandMillis() {
 void OnTrigger()
 {
   Button::OnTrigger();
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-  InputShifter::OnTrigger();
-#endif
 }

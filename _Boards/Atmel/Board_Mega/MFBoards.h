@@ -12,7 +12,7 @@
 #define MAX_STEPPERS 10
 #define MAX_ANALOG_INPUTS 16
 
-#define STEPS 64
+//#define STEPS 64
 #define STEPPER_SPEED 400 // 300 already worked, 467, too?
 #define STEPPER_ACCEL 800
 

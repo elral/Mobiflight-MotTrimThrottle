@@ -143,19 +143,11 @@ void readConfig()
       copy_success = readEndCommandFromFlash(&addreeprom);        // check EEPROM until end of name
       break;
 
-#if MF_SEGMENT_SUPPORT == 1
-    case kTypeLedSegment:
-      params[0] = readUintFromFlash(&addreeprom);                 // get the Pin Data number
-      params[1] = readUintFromFlash(&addreeprom);                 // get the Pin CS number
-      params[2] = readUintFromFlash(&addreeprom);                 // get the Pin CLK number
-      params[3] = readUintFromFlash(&addreeprom);                 // get the brightness
-      params[4] = readUintFromFlash(&addreeprom);                 // get the number of modules
-      SetpointStepper::Add(params[0], params[1], params[2], params[4], params[3]);
+    case kTypeServo:                                              // used for setting the setpoint
+      SetpointStepper::Add();
       copy_success = readEndCommandFromFlash(&addreeprom);        // check EEPROM until end of name
       break;
-#endif
-/*
-#if MF_STEPPER_SUPPORT == 1
+
     case kTypeStepper:
       params[0] = readUintFromFlash(&addreeprom);                 // get the Pin1 number
       params[1] = readUintFromFlash(&addreeprom);                 // get the Pin2 number
@@ -165,16 +157,13 @@ void readConfig()
       Stepper::Add(params[0], params[1], params[2], params[3], params[4]);
       copy_success = readEndCommandFromFlash(&addreeprom);        // check EEPROM until end of name
       break;
-#endif
-*/
-#if MF_ANALOG_SUPPORT == 1
+
     case kTypeAnalogInput:
       params[0] = readUintFromFlash(&addreeprom);                 // get the pin number
       params[1] = readUintFromFlash(&addreeprom);                 // get the sensitivity
       Analog::Add(params[0], &nameBuffer[addrbuffer], params[1]); // MUST be before readNameFromEEPROM because readNameFromEEPROM returns the pointer for the NEXT Name
       copy_success = readNameFromFlash(&addreeprom, nameBuffer, &addrbuffer);  // copy the NULL terminated name to to nameBuffer and set to next free memory location
       break;
-#endif
 
     default:
       copy_success = readEndCommandFromFlash(&addreeprom);       // check EEPROM until end of name

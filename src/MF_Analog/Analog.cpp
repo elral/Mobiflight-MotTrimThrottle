@@ -40,9 +40,9 @@ void Add(uint8_t pin = 1, char const *name = "AnalogInput", uint8_t sensitivity 
 void Clear()
 {
     analogRegistered = 0;
-    #ifdef DEBUG2CMDMESSENGER
+#ifdef DEBUG2CMDMESSENGER
     cmdMessenger.sendCmd(kStatus, F("Cleared analog devices"));
-    #endif
+#endif
 }
 
 void read()
@@ -55,7 +55,7 @@ void read()
 
 int16_t getActualValue(uint8_t channel)
 {
-    return analog[channel]->getActualValue();
+    return analog[channel]->getActualValue();           // range is -512 ... +511
 }
 
 void readAverage()
