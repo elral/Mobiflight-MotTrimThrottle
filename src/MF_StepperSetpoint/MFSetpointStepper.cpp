@@ -9,7 +9,7 @@ MFSetpointStepper::MFSetpointStepper()
   _initialized = false;
 }
 
-void MFSetpointStepper::setSetpoint(byte module, char *string, byte points, byte mask, bool convertPoints)
+void MFSetpointStepper::setSetpoint(char *string)
 {
   if (!_initialized)
     return;

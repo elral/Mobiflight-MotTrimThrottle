@@ -6,7 +6,7 @@ class MFSetpointStepper
 {
 public:
     MFSetpointStepper();
-    void setSetpoint(byte module, char *string, byte points, byte mask, bool convertPoints = false);
+    void setSetpoint(char *string);
     void attach();
     void detach();
     int16_t getSetpoint();
