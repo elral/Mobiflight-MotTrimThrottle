@@ -21,7 +21,7 @@ void attachCommandCallbacks()
   // Attach callback methods
   cmdMessenger.attach(OnUnknownCommand);
 
-  cmdMessenger.attach(kSetServo, SetpointStepper::OnSetModule);
+  cmdMessenger.attach(kSetModule, SetpointStepper::OnSetModule);
   cmdMessenger.attach(kSetPin, Output::OnSet);
   cmdMessenger.attach(kSetStepper, Stepper::OnSetRelative);
   cmdMessenger.attach(kResetStepper, Stepper::OnReset);

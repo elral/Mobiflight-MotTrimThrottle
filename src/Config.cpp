@@ -143,7 +143,12 @@ void readConfig()
       copy_success = readEndCommandFromFlash(&addreeprom);        // check EEPROM until end of name
       break;
 
-    case kTypeServo:                                              // used for setting the setpoint
+    case kTypeLedSegment:
+      params[0] = readUintFromFlash(&addreeprom);                 // get the Pin Data number
+      params[1] = readUintFromFlash(&addreeprom);                 // get the Pin CS number
+      params[2] = readUintFromFlash(&addreeprom);                 // get the Pin CLK number
+      params[3] = readUintFromFlash(&addreeprom);                 // get the brightness
+      params[4] = readUintFromFlash(&addreeprom);                 // get the number of modules
       SetpointStepper::Add();
       copy_success = readEndCommandFromFlash(&addreeprom);        // check EEPROM until end of name
       break;

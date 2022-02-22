@@ -31,10 +31,13 @@ void Clear()
 
 void OnSetModule()
 {
+//  int16_t newValue = 0;
   int stepper = cmdMessenger.readInt16Arg();
-  int newValue = cmdMessenger.readInt16Arg();     // range must be in +/- 0.1% -> -1000 ... 0 ... +1000
-  if (stepper >= stepperSetpointRegistered)
-    return;
+  int temp = cmdMessenger.readInt16Arg();
+  char *value = cmdMessenger.readStringArg();
+  temp = (uint8_t)cmdMessenger.readInt16Arg();
+  temp = (uint8_t)cmdMessenger.readInt16Arg();
+  int16_t newValue = atoi(value);
   if (newValue < -1000)
     newValue = -1000;
   if (newValue > 1000)
