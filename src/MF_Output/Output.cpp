@@ -43,7 +43,7 @@ void OnSet()
   int pin = cmdMessenger.readInt16Arg();
   int state = cmdMessenger.readInt16Arg();
   // Set led
-  analogWrite(pin, state);        // why does the UI sends the pin number and not the x.th output number like other devices?
+  analogWrite(pin, 255 - state);  // why does the UI sends the pin number and not the x.th output number like other devices? Negate the output
 //  output[pin]->set(state);      // once this is changed uncomment this
   setLastCommandMillis();
 }
