@@ -92,9 +92,9 @@ void setup()
   lastAnalogRead = millis() + 4;
 }
 
-uint16_t setPoint = 0;
-uint16_t actualValue = 0;
-int16_t  deltaSteps = 0;
+int16_t setPoint = 0;
+int16_t actualValue = 0;
+int16_t deltaSteps = 0;
 // ************************************************************
 // Loop function
 // ************************************************************
@@ -127,16 +127,12 @@ void loop()
     setPoint = SetpointStepper::GetSetpoint(TrimWheel);     // range is -500 ... 500, from UI setpoint must be in +/-0.1%
     actualValue = Analog::getActualValue(TrimWheel);        // range is -512 ... 511 for 270°
     deltaSteps = setPoint - actualValue;                    // Stepper: 800 steps for 360° -> 600 steps for 270°
-//    if (abs(deltaSteps) > 100)
-//      deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough! But ONLY for bigger steps, otherwise setpoint will not be reached
-    Stepper::SetRelative(TrimWheel, deltaSteps);            // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+    Stepper::SetRelative(TrimWheel, deltaSteps/2);          // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
 
     setPoint = SetpointStepper::GetSetpoint(Throttle);      // range is -500 ... 500, from UI setpoint must be in +/-0.1%
     actualValue = Analog::getActualValue(Throttle);         // range is -512 ... 511 for 270°
     deltaSteps = setPoint - actualValue;                    // Stepper: 800 steps for 360° -> 600 steps for 270°
-//    if (abs(deltaSteps) > 100)
-//      deltaSteps /= 2;                                      // divide by 2, 500 steps for 270°, maybe close enough! But ONLY for bigger steps, otherwise setpoint will not be reached
-    Stepper::SetRelative(Throttle, deltaSteps);             // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+    Stepper::SetRelative(Throttle, deltaSteps/2);           // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
 
   }
 }
@@ -146,3 +142,5 @@ void loop()
 // 1,1,0,12345678,255;  Modul 1 = setpoint Throttle  -> LedSegment::GetSetpoint(1)
 // 3,0,800;             Stepper 0 relative  Stepper::OnSetRelative() gets still valie from CMDMessenger!! additional function required to keep receiving from UI??
 // 3,1,-800;            Stepper 1 relative
+// 2,4,255;             Disable Stepper 0
+// 2,4,0;               Enable Stepper 0
