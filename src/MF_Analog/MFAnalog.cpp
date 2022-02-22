@@ -33,7 +33,7 @@ void MFAnalog::readBuffer(){                                // read ADC and calc
 
 int16_t MFAnalog::getActualValue()
 {
-  return (ADC_Average_Total>>ADC_MAX_AVERAGE_LOG2) - 512;   // transfer 0 ... 1024 to -512 ... 511
+  return (int16_t)(ADC_Average_Total>>ADC_MAX_AVERAGE_LOG2) - 512; // transfer 0 ... 1023 to -512 ... 511
 }
 
 void MFAnalog::attachHandler(analogEvent newHandler)
