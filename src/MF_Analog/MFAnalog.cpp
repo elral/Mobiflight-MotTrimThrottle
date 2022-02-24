@@ -8,8 +8,12 @@ MFAnalog::MFAnalog(uint8_t pin, const char * name, uint8_t sensitivity)
   _pin  = pin;
   _name = name;
   _lastValue = 0;
-  pinMode(_pin, INPUT_PULLUP);      // set pin to input. Could use OUTPUT for analog, but shows the intention :-)
-  analogRead(_pin);                 // turn on pullup resistors
+  pinMode(_pin, INPUT_PULLUP);                            // set pin to input. Could use OUTPUT for analog, but shows the intention :-)
+  analogRead(_pin);                                       // turn on pullup resistors
+  for (uint8_t i = 0; i < ADC_MAX_AVERAGE; i++)           // fill the flaoting average with the actual analog value
+  {
+    readBuffer();
+  }
 }
 
 void MFAnalog::update()
