@@ -4,7 +4,7 @@
     "Device": "atmega328p",
     "BaudRate": "115200",
     "Programmer": "arduino",
-    "FirmwareBaseName": "mobiflight_mini",
+    "FirmwareBaseName": "mottrimthrot_mini",
     "Timeout": 15000
   },
   "Connection": {
@@ -20,7 +20,7 @@
   "Info": {
     "CanInstallFirmware": false,
     "FriendlyName": "Arduino Mini",
-    "LatestFirmwareVersion": "2.0.1",
+    "LatestFirmwareVersion": "0.0.1",
     "MobiFlightType": "MotTrimThrot Mini"
   },
   "ModuleLimits": {

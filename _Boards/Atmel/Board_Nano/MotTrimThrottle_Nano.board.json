@@ -20,7 +20,7 @@
   "Info": {
     "CanInstallFirmware": true,
     "FriendlyName": "Arduino Nano",
-    "LatestFirmwareVersion": "2.0.1",
+    "LatestFirmwareVersion": "0.0.1",
     "MobiFlightType": "MotTrimThrot Nano"
   },
   "ModuleLimits": {
