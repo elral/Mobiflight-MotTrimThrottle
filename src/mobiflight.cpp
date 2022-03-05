@@ -102,7 +102,10 @@ void setup()
     Stepper::SetRelative(Throttle, deltaThrottle/2);        // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
 
     Stepper::update();                                      // ensure stepper is moving
-  } while ((abs(deltaTrim) > 5 && abs(deltaThrottle) > 5) || millis()-startCentering < 3000); // on startup center TrimWheel and Throttle, must be within 3 sec in case one analog in is not connected
+
+    if (millis()-startCentering > 3000)
+      break;                                                // centering must be within 3 sec in case one analog in is not connected
+  } while (abs(deltaTrim) > 5 && abs(deltaThrottle) > 5); // on startup center TrimWheel and Throttle
 
   digitalWrite(4,1);                                        // disable stepper on startup
   digitalWrite(7,1);                                        // disable stepper on startup
