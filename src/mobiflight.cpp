@@ -155,7 +155,8 @@ void loop()
         deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270°
         Stepper::SetRelative(TrimWheel, deltaSteps / 2);    // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
         if (deltaSteps < OUTOFSYNC_RANGE)                   // if actual value is near setpoint
-        {
+        {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
+                    // next movement could be out of range, button press will be initiated
             synchronizedTrim = true;                        // we are synchronized
             lastSyncTrim = millis();                        // save the time of last synchronization for detecting out of sync for more than specified time
         } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedTrim == true)
@@ -169,7 +170,8 @@ void loop()
         deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270°
         Stepper::SetRelative(Throttle, deltaSteps / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
         if (deltaSteps < OUTOFSYNC_RANGE)                   // if actual value is near setpoint
-        {
+        {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
+                    // next movement could be out of range, button press will be initiated
             synchronizedThrottle = true;                    // we are synchronized
             lastSyncThrottle = millis();                    // save the time of last synchronization for detecting out of sync for more than specified time
         } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedThrottle == true)
