@@ -1,8 +1,9 @@
+#include <Arduino.h>
 #include "SetpointStepper.h"
 #include "CommandMessenger.h"
 #include "MFBoards.h"
 #include "allocateMem.h"
-#include <Arduino.h>
+
 
 namespace SetpointStepper
 {

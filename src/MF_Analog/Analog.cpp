@@ -1,10 +1,11 @@
+#include <Arduino.h>
 #include "Analog.h"
 #include "CommandMessenger.h"
 #include "MFAnalog.h"
 #include "MFBoards.h"
 #include "allocateMem.h"
 #include "mobiflight.h"
-#include <Arduino.h>
+
 namespace Analog
 {
     MFAnalog *analog[MAX_ANALOG_INPUTS];

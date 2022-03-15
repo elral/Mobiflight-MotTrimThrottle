@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "CommandMessenger.h"
 #include "Analog.h"
 #include "Button.h"
@@ -7,7 +8,7 @@
 #include "Stepper.h"
 #include "config.h"
 #include "mobiflight.h"
-#include <Arduino.h>
+
 
 CmdMessenger cmdMessenger = CmdMessenger(Serial);
 unsigned long lastCommand;

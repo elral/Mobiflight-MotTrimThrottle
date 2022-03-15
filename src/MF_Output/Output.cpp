@@ -1,10 +1,11 @@
+#include <Arduino.h>
 #include "Output.h"
 #include "CommandMessenger.h"
 #include "MFBoards.h"
 #include "MFOutput.h"
 #include "allocateMem.h"
 #include "mobiflight.h"
-#include <Arduino.h>
+
 
 namespace Output
 {

@@ -1,10 +1,11 @@
+#include <Arduino.h>
 #include "Stepper.h"
 #include "CommandMessenger.h"
 #include "MFBoards.h"
 #include "MFStepper.h"
 #include "allocateMem.h"
 #include "mobiflight.h"
-#include <Arduino.h>
+
 
 namespace Stepper
 {

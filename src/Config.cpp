@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "config.h"
 #include "Analog.h"
 #include "Button.h"
@@ -8,7 +9,7 @@
 #include "SetpointStepper.h"
 #include "Stepper.h"
 #include "configuration.h"
-#include <Arduino.h>
+
 
 // The build version comes from an environment variable
 #define STRINGIZER(arg) #arg
@@ -121,7 +122,7 @@ void readConfig()
     if (command == 0) // just to be sure
         return;
 
-    do // go through the EEPROM until it is NULL terminated
+    do // go through the Flash until it is NULL terminated
     {
         switch (command) {
         case kTypeButton:

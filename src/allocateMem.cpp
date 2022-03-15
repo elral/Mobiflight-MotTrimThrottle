@@ -1,8 +1,9 @@
+#include <Arduino.h>
 #include "allocateMem.h"
 #include "CommandMessenger.h"
 #include "MFBoards.h"
 #include "mobiflight.h"
-#include <Arduino.h>
+
 
 char deviceBuffer[MF_MAX_DEVICEMEM] = {0};
 uint16_t nextPointer = 0;
