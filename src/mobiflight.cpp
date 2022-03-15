@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "mobiflight.h"
 #include "Analog.h"
 #include "Button.h"
@@ -7,11 +8,13 @@
 #include "SetpointStepper.h"
 #include "Stepper.h"
 #include "config.h"
-#include <Arduino.h>
+
 
 #define MF_BUTTON_DEBOUNCE_MS 10     // time between updating the buttons
 #define MF_ANALOGAVERAGE_DELAY_MS 10 // time between updating the analog average calculation
 #define MF_ANALOGREAD_DELAY_MS 50    // time between sending analog values
+#define OUTOFSYNC_RANGE 6            // if delta is below, then it's synced
+#define OUTOFSYNC_TIME 1000          // min. time for out of sync detection, in ms
 
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
@@ -21,6 +24,11 @@ uint32_t lastAnalogRead = 0;
 int16_t setPoint = 0;
 int16_t actualValue = 0;
 int16_t deltaSteps = 0;
+
+bool synchronizedTrim = true;
+uint32_t lastSyncTrim = 0;
+bool synchronizedThrottle = true;
+uint32_t lastSyncThrottle = 0;
 
 // ************************************************************
 // Power saving
@@ -99,7 +107,11 @@ void setup()
         Stepper::update(); // ensure stepper is moving
 
         if (millis() - startCentering > 3000)
+        {
+            synchronizedTrim = false;
+            synchronizedThrottle = false;
             break;                                          // centering must be within 3 sec in case one analog in is not connected
+        }   
     } while (abs(deltaTrim) > 5 && abs(deltaThrottle) > 5); // on startup center TrimWheel and Throttle
 
     digitalWrite(4, 1); // disable stepper on startup
@@ -109,6 +121,8 @@ void setup()
     lastButtonUpdate = millis() + 0;
     lastAnalogAverage = millis() + 4;
     lastAnalogRead = millis() + 4;
+    lastSyncTrim = millis();
+    lastSyncThrottle = millis();
 }
 
 // ************************************************************
@@ -140,11 +154,29 @@ void loop()
         actualValue = Analog::getActualValue(TrimWheel);    // range is -512 ... 511 for 270°
         deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270°
         Stepper::SetRelative(TrimWheel, deltaSteps / 2);    // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+        if (deltaSteps < OUTOFSYNC_RANGE)                   // if actual value is near setpoint
+        {
+            synchronizedTrim = true;                        // we are synchronized
+            lastSyncTrim = millis();                        // save the time of last synchronization for detecting out of sync for more than specified time
+        } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedTrim == true)
+        {
+            synchronizedTrim = false;
+            Button::press(0);                               // simulate button press, is button release required for the connector?
+        }
 
-        setPoint = SetpointStepper::GetSetpoint(Throttle); // range is -500 ... 500, from UI setpoint must be in +/-0.1%
-        actualValue = Analog::getActualValue(Throttle);    // range is -512 ... 511 for 270°
-        deltaSteps = setPoint - actualValue;               // Stepper: 800 steps for 360° -> 600 steps for 270°
-        Stepper::SetRelative(Throttle, deltaSteps / 2);    // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+        setPoint = SetpointStepper::GetSetpoint(Throttle);  // range is -500 ... 500, from UI setpoint must be in +/-0.1%
+        actualValue = Analog::getActualValue(Throttle);     // range is -512 ... 511 for 270°
+        deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270°
+        Stepper::SetRelative(Throttle, deltaSteps / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+        if (deltaSteps < OUTOFSYNC_RANGE)                   // if actual value is near setpoint
+        {
+            synchronizedThrottle = true;                    // we are synchronized
+            lastSyncThrottle = millis();                    // save the time of last synchronization for detecting out of sync for more than specified time
+        } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedThrottle == true)
+        {
+            synchronizedThrottle = false;
+            Button::press(0);                               // simulate button press, is button release required for the connector?
+        }
     }
 }
 
