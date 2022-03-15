@@ -1,10 +1,11 @@
+#include <Arduino.h>
 #include "button.h"
 #include "CommandMessenger.h"
 #include "MFBoards.h"
 #include "MFButton.h"
 #include "allocateMem.h"
 #include "mobiflight.h"
-#include <Arduino.h>
+
 
 namespace Button
 {
@@ -50,6 +51,18 @@ namespace Button
         for (int i = 0; i != buttonsRegistered; i++) {
             buttons[i]->update();
         }
+    }
+
+    void press(uint8_t button)
+    {
+        if (button < buttonsRegistered)
+            buttons[button]->triggerOnPress();
+    }
+
+    void release(uint8_t button)
+    {
+        if (button < buttonsRegistered)
+            buttons[button]->triggerOnRelease();
     }
 
     void OnTrigger()
