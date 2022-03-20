@@ -54,4 +54,4 @@ namespace SetpointStepper
         return Setpoint[stepper];
     }
 
-} // end of namespace LedSegment
+} // end of namespace SetpointStepper

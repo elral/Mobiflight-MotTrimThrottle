@@ -22,6 +22,9 @@ uint32_t lastButtonUpdate = 0;
 uint32_t lastAnalogAverage = 0;
 uint32_t lastAnalogRead = 0;
 int16_t setPoint = 0;
+int16_t oldsetPoint = 0;
+bool inMove = false;
+uint32_t time2move = 0;
 int16_t actualValue = 0;
 int16_t deltaSteps = 0;
 
@@ -153,17 +156,32 @@ void loop()
 
         setPoint = SetpointStepper::GetSetpoint(TrimWheel); // range is -500 ... 500, from UI setpoint must be in +/-0.1%
         actualValue = Analog::getActualValue(TrimWheel);    // range is -512 ... 511 for 270°
-        deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270°
+        deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270° -> with gear 1:2 = 900 steps
         Stepper::SetRelative(TrimWheel, deltaSteps / 2);    // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-// auf neuen Setpoint abfragen und dann Sync auf false setzen?? bis wieder gesynced wurde?
-// aber was ist mit manueller bewegung wenn neuen setpoint angefahren wird?
-// ggf. delta * Zeit aussetzen??
+
+        if (oldsetPoint != setPoint)                        // stepper must move
+        {
+            oldsetPoint = setPoint;
+            inMove = true;
+            //time2move = millis() + ((uint32_t)abs(deltaSteps) * 1000 * 4) / 900;  // 4 sec. from min to max (900 steps) in msec.
+            uint16_t accel = 1 + ((1000 - abs(deltaSteps)) / 250);      // consider longer time for small steps due to acceleration
+            time2move = millis() + ((uint32_t)abs(deltaSteps) * 10 * 4 * accel) / 9;
+    Serial.print("Start Moving for corrected:"); Serial.println(time2move - millis());
+    Serial.print("Delta Steps: "); Serial.println(abs(deltaSteps));
+        }
+
+        if (time2move < millis() && inMove)
+        {
+            inMove = false;
+    Serial.println("Stop moving");
+        }
+
         if (abs(deltaSteps) < OUTOFSYNC_RANGE)              // if actual value is near setpoint
         {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
                     // next movement could be out of range, button press will be initiated
             synchronizedTrim = true;                        // we are synchronized
             lastSyncTrim = millis();                        // save the time of last synchronization for detecting out of sync for more than specified time
-        } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedTrim == true)
+        } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedTrim == true && !inMove)
         {
             synchronizedTrim = false;
             Button::press(0);                               // simulate button press, is button release required for the connector?
@@ -171,7 +189,7 @@ void loop()
 
         setPoint = SetpointStepper::GetSetpoint(Throttle);  // range is -500 ... 500, from UI setpoint must be in +/-0.1%
         actualValue = Analog::getActualValue(Throttle);     // range is -512 ... 511 for 270°
-        deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270°
+        deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270° -> with gear 1:2 = 900 steps
         Stepper::SetRelative(Throttle, deltaSteps / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
         if (abs(deltaSteps) < OUTOFSYNC_RANGE)              // if actual value is near setpoint
         {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
