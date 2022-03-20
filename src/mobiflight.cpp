@@ -14,7 +14,7 @@
 #define MF_ANALOGAVERAGE_DELAY_MS 10 // time between updating the analog average calculation
 #define MF_ANALOGREAD_DELAY_MS 50    // time between sending analog values
 #define OUTOFSYNC_RANGE 6            // if delta is below, then it's synced
-#define OUTOFSYNC_TIME 1000          // min. time for out of sync detection, in ms
+#define OUTOFSYNC_TIME 100          // min. time for out of sync detection, in ms
 
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
@@ -84,27 +84,27 @@ void setup()
     cmdMessenger.printLfCr();
     ResetBoard();
 
-    Stepper::Add(2, 3, 2, 3, 0); // add and initialize Stepper TrimWheel
-    Stepper::Add(5, 6, 5, 6, 0); // add and initialize Stepper Throttle
+    Stepper::Add(2, 3, 2, 3, 0);                            // add and initialize Stepper TrimWheel
+    Stepper::Add(5, 6, 5, 6, 0);                            // add and initialize Stepper Throttle
 
-    digitalWrite(4, 0); // enable stepper for moving to center position
-    digitalWrite(7, 0); // enable stepper for moving to center position
-    setPoint = 0;       // define center position
+    digitalWrite(4, 0);                                     // enable stepper for moving to center position
+    digitalWrite(7, 0);                                     // enable stepper for moving to center position
+    setPoint = 0;                                           // define center position
     uint32_t startCentering = millis();
     int16_t deltaTrim = 0;
     int16_t deltaThrottle = 0;
     do {
-        Analog::readAverage(); // read analog and calculate floating average
+        Analog::readAverage();                              // read analog and calculate floating average
 
-        actualValue = Analog::getActualValue(TrimWheel); // range is -512 ... 511 for 270°
-        deltaTrim = setPoint - actualValue;              // Stepper: 800 steps for 360° -> 600 steps for 270°
-        Stepper::SetRelative(TrimWheel, deltaTrim / 2);  // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+        actualValue = Analog::getActualValue(TrimWheel);    // range is -512 ... 511 for 270°
+        deltaTrim = setPoint - actualValue;                 // Stepper: 800 steps for 360° -> 600 steps for 270°
+        Stepper::SetRelative(TrimWheel, deltaTrim / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
 
-        actualValue = Analog::getActualValue(Throttle);    // range is -512 ... 511 for 270°
-        deltaThrottle = setPoint - actualValue;            // Stepper: 800 steps for 360° -> 600 steps for 270°
-        Stepper::SetRelative(Throttle, deltaThrottle / 2); // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+        actualValue = Analog::getActualValue(Throttle);     // range is -512 ... 511 for 270°
+        deltaThrottle = setPoint - actualValue;             // Stepper: 800 steps for 360° -> 600 steps for 270°
+        Stepper::SetRelative(Throttle, deltaThrottle / 2);  // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
 
-        Stepper::update(); // ensure stepper is moving
+        Stepper::update();          // ensure stepper is moving
 
         if (millis() - startCentering > 3000)
         {
@@ -114,8 +114,8 @@ void setup()
         }   
     } while (abs(deltaTrim) > 5 && abs(deltaThrottle) > 5); // on startup center TrimWheel and Throttle
 
-    digitalWrite(4, 1); // disable stepper on startup
-    digitalWrite(7, 1); // disable stepper on startup
+    digitalWrite(4, 1);                                     // disable stepper on startup
+    digitalWrite(7, 1);                                     // disable stepper on startup
 
     // Time Gap between Inputs, do not read at the same loop
     lastButtonUpdate = millis() + 0;
@@ -137,7 +137,8 @@ void loop()
     if (getStatusConfig()) {
         if (millis() - lastButtonUpdate >= MF_BUTTON_DEBOUNCE_MS) {
             lastButtonUpdate = millis();
-            Button::read();
+    //        Button::read();   Button 0 and 1 is simulated lost of sync, must not be read in as it gots wrong status
+    // maybe better not to read in via loadconfig()??
         }
         if (millis() - lastAnalogRead >= MF_ANALOGREAD_DELAY_MS) {
             lastAnalogRead = millis();
@@ -154,7 +155,10 @@ void loop()
         actualValue = Analog::getActualValue(TrimWheel);    // range is -512 ... 511 for 270°
         deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270°
         Stepper::SetRelative(TrimWheel, deltaSteps / 2);    // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-        if (deltaSteps < OUTOFSYNC_RANGE)                   // if actual value is near setpoint
+// auf neuen Setpoint abfragen und dann Sync auf false setzen?? bis wieder gesynced wurde?
+// aber was ist mit manueller bewegung wenn neuen setpoint angefahren wird?
+// ggf. delta * Zeit aussetzen??
+        if (abs(deltaSteps) < OUTOFSYNC_RANGE)              // if actual value is near setpoint
         {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
                     // next movement could be out of range, button press will be initiated
             synchronizedTrim = true;                        // we are synchronized
@@ -169,7 +173,7 @@ void loop()
         actualValue = Analog::getActualValue(Throttle);     // range is -512 ... 511 for 270°
         deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270°
         Stepper::SetRelative(Throttle, deltaSteps / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-        if (deltaSteps < OUTOFSYNC_RANGE)                   // if actual value is near setpoint
+        if (abs(deltaSteps) < OUTOFSYNC_RANGE)              // if actual value is near setpoint
         {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
                     // next movement could be out of range, button press will be initiated
             synchronizedThrottle = true;                    // we are synchronized
@@ -177,7 +181,7 @@ void loop()
         } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedThrottle == true)
         {
             synchronizedThrottle = false;
-            Button::press(0);                               // simulate button press, is button release required for the connector?
+            Button::press(1);                               // simulate button press, is button release required for the connector?
         }
     }
 }
