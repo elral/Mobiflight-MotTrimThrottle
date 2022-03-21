@@ -165,7 +165,8 @@ void loop()
             inMove = true;
             //time2move = millis() + ((uint32_t)abs(deltaSteps) * 1000 * 4) / 900;  // 4 sec. from min to max (900 steps) in msec.
             uint16_t accel = 1 + ((1000 - abs(deltaSteps)) / 250);      // consider longer time for small steps due to acceleration
-            time2move = millis() + ((uint32_t)abs(deltaSteps) * 10 * 4 * accel) / 9;
+            //time2move = millis() + ((uint32_t)abs(deltaSteps) * 10 * 4 * accel) / 9;
+            time2move = millis() + ((uint32_t)abs(deltaSteps) * 10 * 3 * accel) / 9;
     Serial.print("Start Moving for corrected:"); Serial.println(time2move - millis());
     Serial.print("Delta Steps: "); Serial.println(abs(deltaSteps));
         }
