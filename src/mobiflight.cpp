@@ -5,7 +5,7 @@
 #include "CommandMessenger.h"
 #include "MFBoards.h"
 #include "Output.h"
-#include "SetpointStepper.h"
+#include "MotAxis.h"
 #include "Stepper.h"
 #include "config.h"
 
@@ -154,7 +154,7 @@ void loop()
 
         Stepper::update();
 
-        setPoint = SetpointStepper::GetSetpoint(TrimWheel); // range is -500 ... 500, from UI setpoint must be in +/-0.1%
+        setPoint = MotAxis::GetSetpoint(TrimWheel); // range is -500 ... 500, from UI setpoint must be in +/-0.1%
         actualValue = Analog::getActualValue(TrimWheel);    // range is -512 ... 511 for 270°
         deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270° -> with gear 1:2 = 900 steps
         Stepper::SetRelative(TrimWheel, deltaSteps / 2);    // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
@@ -187,7 +187,7 @@ void loop()
             Button::press(0);                               // simulate button press, is button release required for the connector?
         }
 
-        setPoint = SetpointStepper::GetSetpoint(Throttle);  // range is -500 ... 500, from UI setpoint must be in +/-0.1%
+        setPoint = MotAxis::GetSetpoint(Throttle);  // range is -500 ... 500, from UI setpoint must be in +/-0.1%
         actualValue = Analog::getActualValue(Throttle);     // range is -512 ... 511 for 270°
         deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270° -> with gear 1:2 = 900 steps
         Stepper::SetRelative(Throttle, deltaSteps / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself

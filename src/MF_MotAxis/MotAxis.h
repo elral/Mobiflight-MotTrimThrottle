@@ -1,9 +1,9 @@
 #pragma once
 
-namespace SetpointStepper
+namespace MotAxis
 {
 void Add();
 void Clear();
 void OnSetModule();
-int16_t GetSetpoint(uint8_t _module);
+int16_t GetSetpoint(uint8_t stepper);
 }

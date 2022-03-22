@@ -4,7 +4,7 @@
 #include "Button.h"
 #include "MFBoards.h"
 #include "Output.h"
-#include "SetpointStepper.h"
+#include "MotAxis.h"
 #include "Stepper.h"
 #include "config.h"
 #include "mobiflight.h"
@@ -22,7 +22,7 @@ void attachCommandCallbacks()
     // Attach callback methods
     cmdMessenger.attach(OnUnknownCommand);
 
-    cmdMessenger.attach(kSetModule, SetpointStepper::OnSetModule);
+    cmdMessenger.attach(kSetModule, MotAxis::OnSetModule);
     cmdMessenger.attach(kSetPin, Output::OnSet);
     cmdMessenger.attach(kSetStepper, Stepper::OnSetRelative);
     cmdMessenger.attach(kResetStepper, Stepper::OnReset);

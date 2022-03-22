@@ -1,19 +1,19 @@
 #include <Arduino.h>
-#include "SetpointStepper.h"
+#include "MotAxis.h"
 #include "CommandMessenger.h"
 #include "MFBoards.h"
 #include "allocateMem.h"
 
 
-namespace SetpointStepper
+namespace MotAxis
 {
 
     uint8_t stepperSetpointRegistered = 0;
-    int16_t Setpoint[MAX_STEPPER_SETPOINT];
+    int16_t Setpoint[MAX_MOTAXIS];
 
     void Add()
     {
-        if (stepperSetpointRegistered == MAX_STEPPER_SETPOINT)
+        if (stepperSetpointRegistered == MAX_MOTAXIS)
             return;
         Setpoint[stepperSetpointRegistered] = 0;
         stepperSetpointRegistered++;

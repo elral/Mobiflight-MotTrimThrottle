@@ -6,7 +6,7 @@
 #include "MFBoards.h"
 #include "MFEEPROM.h"
 #include "Output.h"
-#include "SetpointStepper.h"
+#include "MotAxis.h"
 #include "Stepper.h"
 #include "configuration.h"
 
@@ -143,7 +143,7 @@ void readConfig()
             params[2] = readUintFromFlash(&addreeprom); // get the Pin CLK number
             params[3] = readUintFromFlash(&addreeprom); // get the brightness
             params[4] = readUintFromFlash(&addreeprom); // get the number of modules
-            SetpointStepper::Add();
+            MotAxis::Add();
             copy_success = readEndCommandFromFlash(&addreeprom); // check EEPROM until end of name
             break;
 
