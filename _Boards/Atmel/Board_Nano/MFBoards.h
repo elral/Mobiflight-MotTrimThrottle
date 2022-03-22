@@ -14,7 +14,7 @@
 #define MAX_ANALOG_INPUTS 3
 
 //#define STEPS 64
-#define STEPPER_SPEED 400 // 300 already worked, 467, too?
+#define STEPPER_SPEED 600 //400 // 300 already worked, 467, too?
 #define STEPPER_ACCEL 800
 
 #define MOBIFLIGHT_TYPE         "MotTrimThrot Nano"
