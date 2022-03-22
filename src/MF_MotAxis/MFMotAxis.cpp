@@ -2,7 +2,14 @@
 
 MotAxisEvent MFMotAxis::_handler = NULL;
 
-MFMotAxis::MFMotAxis(uint8_t pin, const char *name, uint8_t sensitivity)
+MFMotAxis::MFMotAxis(uint8_t analogPin)
+{
+    _initialized = true;
+    _setpoint = 0;
+    _analogPin = analogPin;
+}
+
+void detach()
 {
 
 }
@@ -12,13 +19,13 @@ void MFMotAxis::update()
 
 }
 
-void MFMotAxis::readBuffer()
+void MFMotAxis::setSetpoint(uint16_t setpoint)
 {
-
+    _setpoint = setpoint;
 }
 
-int16_t MFMotAxis::getActualValue()
+int16_t MFMotAxis::getSetpoint()
 {
-
+    return _setpoint;
 }
 

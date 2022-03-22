@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "MotAxis.h"
+#include "MFMotAxis.h"
 #include "CommandMessenger.h"
 #include "MFBoards.h"
 #include "allocateMem.h"
@@ -8,15 +9,22 @@
 namespace MotAxis
 {
 
-    uint8_t stepperSetpointRegistered = 0;
-    int16_t Setpoint[MAX_MOTAXIS];
+    uint8_t MotAxisRegistered = 0;
+    MFMotAxis *motaxis[MAX_MOTAXIS];
 
-    void Add()
+    void Add(uint8_t analogPin)
     {
-        if (stepperSetpointRegistered == MAX_MOTAXIS)
+        if (MotAxisRegistered == MAX_MOTAXIS)
             return;
-        Setpoint[stepperSetpointRegistered] = 0;
-        stepperSetpointRegistered++;
+        
+        if (!FitInMemory(sizeof(MFMotAxis))) {
+            // Error Message to Connector
+            cmdMessenger.sendCmd(kStatus, F("Button does not fit in Memory"));
+            return;
+        }
+        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin);
+
+        MotAxisRegistered++;
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Added Stepper Setpoint"));
 #endif
@@ -24,16 +32,25 @@ namespace MotAxis
 
     void Clear()
     {
-        stepperSetpointRegistered = 0;
+        for (int i = 0; i != MotAxisRegistered; i++) {
+            motaxis[i]->detach();
+        }
+        MotAxisRegistered = 0;
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Cleared Stepper Setpoint"));
 #endif
     }
 
+    void update()
+    {
+        for (int i = 0; i != MotAxisRegistered; i++) {
+            motaxis[i]->update();
+        }
+    }
+
     void OnSetModule()
     {
-        //  int16_t newValue = 0;
-        int stepper = cmdMessenger.readInt16Arg();
+        int axis = cmdMessenger.readInt16Arg();
         int temp = cmdMessenger.readInt16Arg();
         char *value = cmdMessenger.readStringArg();
         temp = (uint8_t)cmdMessenger.readInt16Arg();
@@ -43,15 +60,16 @@ namespace MotAxis
             newValue = -1000;
         if (newValue > 1000)
             newValue = 1000;
-        Setpoint[stepper] = newValue / 2; // divide by 2 to get -500 ... +500 like the analog values
+        
+        motaxis[axis]->setSetpoint(newValue / 2); // divide by 2 to get -500 ... +500 like the analog values
         setLastCommandMillis();
     }
 
-    int16_t GetSetpoint(uint8_t stepper)
+    int16_t GetSetpoint(uint8_t axis)
     {
-        if (stepper >= stepperSetpointRegistered)
+        if (axis >= MotAxisRegistered)
             return 0;
-        return Setpoint[stepper];
+        return motaxis[axis]->getSetpoint();
     }
 
 } // end of namespace SetpointStepper

@@ -12,13 +12,17 @@ extern "C"
 class MFMotAxis
 {
 public:
-    MFMotAxis(uint8_t pin = 1, const char * name = "Analog Input", uint8_t sensitivity = 2);
+    MFMotAxis(uint8_t analogPin);
+    void detach();
     static void attachHandler(MotAxisEvent handler);    
     void update();
-    void readBuffer();
-    int16_t getActualValue();
+    void setSetpoint(uint16_t setpoint);
+    int16_t getSetpoint();
     
 private:
-    static MotAxisEvent   _handler; 
+    static MotAxisEvent   _handler;
+    bool _initialized = false;
+    uint16_t _setpoint;
+    uint8_t _analogPin;
 
 };
