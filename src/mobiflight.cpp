@@ -86,37 +86,7 @@ void setup()
     attachCommandCallbacks();
     cmdMessenger.printLfCr();
     ResetBoard();
-
-    digitalWrite(4, 0);                                     // enable stepper for moving to center position
-    digitalWrite(7, 0);                                     // enable stepper for moving to center position
-    setPoint = 0;                                           // define center position
-    uint32_t startCentering = millis();
-    int16_t deltaTrim = 0;
-    int16_t deltaThrottle = 0;
-    do {
-        Analog::readAverage();                              // read analog and calculate floating average
-
-        actualValue = Analog::getActualValue(TrimWheel);    // range is -512 ... 511 for 270°
-        deltaTrim = setPoint - actualValue;                 // Stepper: 800 steps for 360° -> 600 steps for 270°
-        Stepper::SetRelative(TrimWheel, deltaTrim / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-
-        actualValue = Analog::getActualValue(Throttle);     // range is -512 ... 511 for 270°
-        deltaThrottle = setPoint - actualValue;             // Stepper: 800 steps for 360° -> 600 steps for 270°
-        Stepper::SetRelative(Throttle, deltaThrottle / 2);  // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-
-        Stepper::update();          // ensure stepper is moving
-
-        if (millis() - startCentering > 3000)
-        {
-            synchronizedTrim = false;
-            synchronizedThrottle = false;
-            break;                                          // centering must be within 3 sec in case one analog in is not connected
-        }   
-    } while (abs(deltaTrim) > 5 && abs(deltaThrottle) > 5); // on startup center TrimWheel and Throttle
-
-    digitalWrite(4, 1);                                     // disable stepper on startup
-    digitalWrite(7, 1);                                     // disable stepper on startup
-
+    MotAxis::startPosition();
     // Time Gap between Inputs, do not read at the same loop
     lastButtonUpdate = millis() + 0;
     lastAnalogAverage = millis() + 4;
@@ -148,10 +118,8 @@ void loop()
             lastAnalogAverage = millis();
             Analog::readAverage();
         }
-
         MotAxis::update();                                  // must be called as often as poosible to update closed loop control
         Stepper::update();                                  // must be called as often as poosible to move the stepper
-
     }
 }
 

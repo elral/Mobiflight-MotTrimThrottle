@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#define OUTOFSYNC_RANGE 6             // if delta is below, then it's synced
+#define OUTOFSYNC_RANGE 6             // if delta is below this value, then it's synced
 #define OUTOFSYNC_TIME 100            // min. time for out of sync detection, in ms
 
 extern "C"
@@ -15,7 +15,8 @@ extern "C"
 class MFMotAxis
 {
 public:
-    MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper);
+    MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, int16_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin);
+    void startPosition();
     void detach();
     static void attachHandler(MotAxisEvent handler);    
     void update();
@@ -34,6 +35,9 @@ private:
     int16_t _oldsetPoint;
     bool _inMove;
     uint32_t _time2move;
-    bool _synchronizedTrim;
-    uint32_t _lastSyncTrim;
+    bool _synchronized;
+    uint32_t _lastSync;
+    uint16_t _movingTime;
+    uint16_t _maxSteps;
+    uint8_t _enablePin;
 };

@@ -5,39 +5,56 @@
 
 MotAxisEvent MFMotAxis::_handler = NULL;
 
-MFMotAxis::MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper)
+MFMotAxis::MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, int16_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin)
 {
     _initialized = true;
-    _setPoint = 0;                                      // range is -500 ... 500, from UI setpoint must be in +/-0.1%
-    _synchronizedTrim = false;
-    _lastSyncTrim = 0;
-    _analogPin = analogPin;
-    _syncButton = syncButton;
-    _stepper = stepper;
-// add moving axis to mid position.
-// mhmhm, for throttle it must be the min position....
+    _setPoint = startPosition;                                      // define center position
+    _synchronized = true;                                           // on startup we will move to start position
+    _lastSync = 0;                                                  // for calculation of out of sync, this is time dependent
+    _analogPin = analogPin;                                         // where to get the actual value from
+    _syncButton = syncButton;                                       // button on which out of sync is reported
+    _stepper = stepper;                                             // which stepper has to be moved
+    _movingTime = movingTime;                                       // time for complete stroke in 1ms (0s to 25.5s)
+    _maxSteps = maxSteps;                                           // number of steps for the complete stroke
+    _enablePin = enablePin;                                         // output to en-/dis-able the stepper
 }
 
-void detach()
+void MFMotAxis::startPosition()
 {
+    digitalWrite(_enablePin, 0);                                    // enable stepper for moving to center position
+    uint32_t startCentering = millis();
+    do {
+        Analog::readAverage();                                      // read analog and calculate floating average
+        _actualValue = Analog::getActualValue(_analogPin);          // range is -512 ... 511 for 270°
+        _deltaSteps = _setPoint - _actualValue;                     // Stepper: 800 steps for 360° -> 600 steps for 270°
+        Stepper::SetRelative(_stepper, _deltaSteps / 2);            // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
+        Stepper::update();                                          // ensure stepper is moving
+        if (millis() - startCentering > _movingTime)                // do not move to center position forever, must be within max. moving time
+        {
+            _synchronized = false;                                  // in this case we are not synchronized
+            break;                                                  // centering must be within 3 sec in case one analog in is not connected
+        }   
+    } while (abs(_deltaSteps) > 5);                                 // on startup center Axis
+    digitalWrite(_enablePin, 1);                                    // disable stepper on startup
+}
 
+void MFMotAxis::detach()
+{
+    _initialized = false;
 }
 
 void MFMotAxis::update()
 {
+    _actualValue = Analog::getActualValue(_analogPin);              // range is -512 ... 511 for 270°
+    _deltaSteps = _setPoint - _actualValue;                         // Stepper: 800 steps for 360° -> 600 steps for 270° -> with gear 1:2 = 900 steps
+    Stepper::SetRelative(_stepper, _deltaSteps / 2);                // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
 
-    _actualValue = Analog::getActualValue(_analogPin);   // range is -512 ... 511 for 270°
-    _deltaSteps = _setPoint - _actualValue;              // Stepper: 800 steps for 360° -> 600 steps for 270° -> with gear 1:2 = 900 steps
-    Stepper::SetRelative(_stepper, _deltaSteps / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-
-    if (_oldsetPoint != _setPoint)                        // stepper must move
+    if (_oldsetPoint != _setPoint)                                  // stepper must move
     {
         _oldsetPoint = _setPoint;
         _inMove = true;
-        //time2move = millis() + ((uint32_t)abs(deltaSteps) * 1000 * 4) / 900;  // 4 sec. from min to max (900 steps) in msec.
         uint16_t accel = 1 + ((1000 - abs(_deltaSteps)) / 250);      // consider longer time for small steps due to acceleration
-        //time2move = millis() + ((uint32_t)abs(deltaSteps) * 10 * 4 * accel) / 9;
-        _time2move = millis() + ((uint32_t)abs(_deltaSteps) * 10 * 3 * accel) / 9;
+        _time2move = millis() + ((uint32_t)abs(_deltaSteps) * _movingTime * accel) / 900;  // 4 sec. from min to max (900 steps) in msec.
 Serial.print("Start Moving for corrected:"); Serial.println(_time2move - millis());
 Serial.print("Delta Steps: "); Serial.println(abs(_deltaSteps));
     }
@@ -48,21 +65,21 @@ Serial.print("Delta Steps: "); Serial.println(abs(_deltaSteps));
 Serial.println("Stop moving");
     }
 
-    if (abs(_deltaSteps) < OUTOFSYNC_RANGE)              // if actual value is near setpoint
+    if (abs(_deltaSteps) < OUTOFSYNC_RANGE)                         // if actual value is near setpoint
     {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
                 // next movement could be out of range, button press will be initiated
-        _synchronizedTrim = true;                        // we are synchronized
-        _lastSyncTrim = millis();                        // save the time of last synchronization for detecting out of sync for more than specified time
-    } else if (millis() - _lastSyncTrim >= OUTOFSYNC_TIME && _synchronizedTrim == true && !_inMove)
+        _synchronized = true;                                       // we are synchronized
+        _lastSync = millis();                                       // save the time of last synchronization for detecting out of sync for more than specified time
+    } else if (millis() - _lastSync >= OUTOFSYNC_TIME && _synchronized == true && !_inMove)
     {
-        _synchronizedTrim = false;
-        Button::press(_syncButton);                               // simulate button press, is button release required for the connector?
+        _synchronized = false;
+        Button::press(_syncButton);                                 // simulate button press, is button release required for the connector?
     }
 }
 
 void MFMotAxis::setSetpoint(uint16_t setpoint)
 {
-    _setPoint = setpoint;
+    _setPoint = setpoint;                                           // range is -500 ... 500, from UI setpoint must be in +/-0.1%
 }
 
 int16_t MFMotAxis::getSetpoint()

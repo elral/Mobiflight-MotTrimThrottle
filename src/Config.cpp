@@ -72,11 +72,11 @@ uint8_t readUintFromFlash(volatile uint16_t *addreeprom)
     char params[4] = {0}; // max 3 (255) digits NULL terminated
     uint8_t counter = 0;
     do {
-        params[counter++] = pgm_read_byte_near(configuration + (*addreeprom)++); // read character from eeprom and locate next buffer and eeprom location
-        if (*addreeprom > sizeof(configuration))                                 // abort if EEPROM size will be exceeded
+        params[counter++] = pgm_read_byte_near(configuration + (*addreeprom)++);    // read character from eeprom and locate next buffer and eeprom location
+        if (*addreeprom > sizeof(configuration))                                    // abort if EEPROM size will be exceeded
             return 0;
-    } while (params[counter - 1] != '.' && counter < sizeof(configuration)); // reads until limiter '.' and for safety reason not more then size of params[]
-    params[counter - 1] = 0x00;                                              // replace '.' by NULL to terminate the string
+    } while (params[counter - 1] != '.' && counter < sizeof(configuration));        // reads until limiter '.' and for safety reason not more then size of params[]
+    params[counter - 1] = 0x00;                                                     // replace '.' by NULL to terminate the string
     return atoi(params);
 }
 
@@ -86,15 +86,15 @@ bool readNameFromFlash(uint16_t *addreeprom, char *buffer, uint16_t *addrbuffer)
 {
     char temp = 0;
     do {
-        temp = pgm_read_byte_near(configuration + (*addreeprom)++); // read the first character
-        if (*addreeprom > sizeof(configuration))                    // abort if EEPROM size will be exceeded
+        temp = pgm_read_byte_near(configuration + (*addreeprom)++);                 // read the first character
+        if (*addreeprom > sizeof(configuration))                                    // abort if EEPROM size will be exceeded
             return false;
-        buffer[(*addrbuffer)++] = temp;            // save character and locate next buffer position
-        if (*addrbuffer >= MEMLEN_CONFIG_BUFFER) { // nameBuffer will be exceeded
-            return false;                          // abort copying from EEPROM to nameBuffer
+        buffer[(*addrbuffer)++] = temp;                                             // save character and locate next buffer position
+        if (*addrbuffer >= MEMLEN_CONFIG_BUFFER) {                                  // nameBuffer will be exceeded
+            return false;                                                           // abort copying from EEPROM to nameBuffer
         }
-    } while (temp != ':');            // reads until limiter ':' and locates the next free buffer position
-    buffer[(*addrbuffer) - 1] = 0x00; // replace ':' by NULL, terminates the string
+    } while (temp != ':');                                                          // reads until limiter ':' and locates the next free buffer position
+    buffer[(*addrbuffer) - 1] = 0x00;                                               // replace ':' by NULL, terminates the string
     return true;
 }
 
@@ -104,25 +104,25 @@ bool readEndCommandFromFlash(uint16_t *addreeprom)
     char temp = 0;
     do {
         temp = pgm_read_byte_near(configuration + (*addreeprom)++);
-        if (*addreeprom > sizeof(configuration)) // abort if EEPROM size will be exceeded
+        if (*addreeprom > sizeof(configuration))                                    // abort if EEPROM size will be exceeded
             return false;
-    } while (temp != ':'); // reads until limiter ':'
+    } while (temp != ':');                                                          // reads until limiter ':'
     return true;
 }
 
 void readConfig()
 {
-    uint16_t addreeprom = MEM_OFFSET_CONFIG; // define first memory location where config is saved in EEPROM
-    uint16_t addrbuffer = 0;                 // and start with first memory location from nameBuffer
+    uint16_t addreeprom = MEM_OFFSET_CONFIG;                                        // define first memory location where config is saved in EEPROM
+    uint16_t addrbuffer = 0;                                                        // and start with first memory location from nameBuffer
     char params[6] = "";
-    char command = readUintFromFlash(&addreeprom); // read the first value from EEPROM, it's a device definition
-    bool copy_success = true;                      // will be set to false if copying input names to nameBuffer exceeds array dimensions
-                                                   // not required anymore when pins instead of names are transferred to the UI
+    char command = readUintFromFlash(&addreeprom);                                  // read the first value from EEPROM, it's a device definition
+    bool copy_success = true;                                                       // will be set to false if copying input names to nameBuffer exceeds array dimensions
+                                                                                    // not required anymore when pins instead of names are transferred to the UI
 
-    if (command == 0) // just to be sure
+    if (command == 0)                                                               // just to be sure
         return;
 
-    do // go through the Flash until it is NULL terminated
+    do                                                                              // go through the Flash until it is NULL terminated
     {
         switch (command) {
         case kTypeButton:
@@ -141,9 +141,9 @@ void readConfig()
             params[0] = readUintFromFlash(&addreeprom); // get the registered analog Pin
             params[1] = readUintFromFlash(&addreeprom); // get the registered sync lost button
             params[2] = readUintFromFlash(&addreeprom); // get the registered stepper number
-            params[3] = readUintFromFlash(&addreeprom); // unused
-            params[4] = readUintFromFlash(&addreeprom); // unused
-            MotAxis::Add(params[0], params[1], params[2]);
+            params[3] = readUintFromFlash(&addreeprom); // get the enable Pin
+            params[4] = readUintFromFlash(&addreeprom); // not used
+            MotAxis::Add(params[0], params[1], params[2], params[3], params[4]);
             copy_success = readEndCommandFromFlash(&addreeprom); // check EEPROM until end of name
             break;
 
