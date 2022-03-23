@@ -10,11 +10,11 @@
 #include "config.h"
 
 
-#define MF_BUTTON_DEBOUNCE_MS 10     // time between updating the buttons
-#define MF_ANALOGAVERAGE_DELAY_MS 10 // time between updating the analog average calculation
-#define MF_ANALOGREAD_DELAY_MS 50    // time between sending analog values
-#define OUTOFSYNC_RANGE 6            // if delta is below, then it's synced
-#define OUTOFSYNC_TIME 100          // min. time for out of sync detection, in ms
+#define MF_BUTTON_DEBOUNCE_MS 10        // time between updating the buttons
+#define MF_ANALOGAVERAGE_DELAY_MS 10    // time between updating the analog average calculation
+#define MF_ANALOGREAD_DELAY_MS 50       // time between sending analog values
+#define OUTOFSYNC_RANGE 6               // if delta is below, then it's synced
+#define OUTOFSYNC_TIME 100              // min. time for out of sync detection, in ms
 
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
@@ -40,7 +40,7 @@ void SetPowerSavingMode(bool state)
 {
     // disable the lights ;)
     powerSavingMode = state;
-    Output::PowerSave(state); // why is this uncommeted in the main branch??
+    Output::PowerSave(state);
 // Maybe there is one for the stepper needed....
 #ifdef DEBUG2CMDMESSENGER
     if (state)
@@ -86,9 +86,6 @@ void setup()
     attachCommandCallbacks();
     cmdMessenger.printLfCr();
     ResetBoard();
-
-    Stepper::Add(2, 3, 2, 3, 0);                            // add and initialize Stepper TrimWheel
-    Stepper::Add(5, 6, 5, 6, 0);                            // add and initialize Stepper Throttle
 
     digitalWrite(4, 0);                                     // enable stepper for moving to center position
     digitalWrite(7, 0);                                     // enable stepper for moving to center position
@@ -152,56 +149,9 @@ void loop()
             Analog::readAverage();
         }
 
-        Stepper::update();
+        MotAxis::update();                                  // must be called as often as poosible to update closed loop control
+        Stepper::update();                                  // must be called as often as poosible to move the stepper
 
-        setPoint = MotAxis::GetSetpoint(TrimWheel); // range is -500 ... 500, from UI setpoint must be in +/-0.1%
-        actualValue = Analog::getActualValue(TrimWheel);    // range is -512 ... 511 for 270°
-        deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270° -> with gear 1:2 = 900 steps
-        Stepper::SetRelative(TrimWheel, deltaSteps / 2);    // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-
-        if (oldsetPoint != setPoint)                        // stepper must move
-        {
-            oldsetPoint = setPoint;
-            inMove = true;
-            //time2move = millis() + ((uint32_t)abs(deltaSteps) * 1000 * 4) / 900;  // 4 sec. from min to max (900 steps) in msec.
-            uint16_t accel = 1 + ((1000 - abs(deltaSteps)) / 250);      // consider longer time for small steps due to acceleration
-            //time2move = millis() + ((uint32_t)abs(deltaSteps) * 10 * 4 * accel) / 9;
-            time2move = millis() + ((uint32_t)abs(deltaSteps) * 10 * 3 * accel) / 9;
-    Serial.print("Start Moving for corrected:"); Serial.println(time2move - millis());
-    Serial.print("Delta Steps: "); Serial.println(abs(deltaSteps));
-        }
-
-        if (time2move < millis() && inMove)
-        {
-            inMove = false;
-    Serial.println("Stop moving");
-        }
-
-        if (abs(deltaSteps) < OUTOFSYNC_RANGE)              // if actual value is near setpoint
-        {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
-                    // next movement could be out of range, button press will be initiated
-            synchronizedTrim = true;                        // we are synchronized
-            lastSyncTrim = millis();                        // save the time of last synchronization for detecting out of sync for more than specified time
-        } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedTrim == true && !inMove)
-        {
-            synchronizedTrim = false;
-            Button::press(0);                               // simulate button press, is button release required for the connector?
-        }
-
-        setPoint = MotAxis::GetSetpoint(Throttle);  // range is -500 ... 500, from UI setpoint must be in +/-0.1%
-        actualValue = Analog::getActualValue(Throttle);     // range is -512 ... 511 for 270°
-        deltaSteps = setPoint - actualValue;                // Stepper: 800 steps for 360° -> 600 steps for 270° -> with gear 1:2 = 900 steps
-        Stepper::SetRelative(Throttle, deltaSteps / 2);     // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
-        if (abs(deltaSteps) < OUTOFSYNC_RANGE)              // if actual value is near setpoint
-        {           // do I have to check for AutoTrim mode??? What happens if manual mode selected and actual value is setpoint -> synchronized = true,
-                    // next movement could be out of range, button press will be initiated
-            synchronizedThrottle = true;                    // we are synchronized
-            lastSyncThrottle = millis();                    // save the time of last synchronization for detecting out of sync for more than specified time
-        } else if (millis() - lastSyncTrim >= OUTOFSYNC_TIME && synchronizedThrottle == true)
-        {
-            synchronizedThrottle = false;
-            Button::press(1);                               // simulate button press, is button release required for the connector?
-        }
     }
 }
 

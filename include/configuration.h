@@ -4,47 +4,21 @@ const char configuration[] PROGMEM =
     "3.7.enableThrottle:"
     "11.14.5.TrimWheel:"
     "11.15.5.Throttle:"
-    "4.8.8.8.15.1.TrimSet:"
-    "4.9.9.9.15.1.ThrottleSet:"
+    "4.0.0.0.15.1.TrimSet:"
+    "4.1.1.1.15.1.ThrottleSet:"
     "1.10.SyncLostTrim:"
     "1.11.SyncLostThrottle:"
-};
-
-/*
-const char configuration[] PROGMEM = 
-{   "3.4.enableTrim:"
-    "3.7.enableThrottle:"
-    "11.14.5.TrimWheel:"
-    "11.15.5.Throttle:"
-    "4.8.10.9.15.1.TrimSet:"
-    "4.11.13.12.15.1.ThrottleSet:"
-    "1.12.SyncLostTrim:"
-    "1.13.SyncLostThrottle:"
-};
-*/
-
-/*
-const char configuration[] PROGMEM = 
-{   "3.4.enableTrim:"
-    "3.7.enableThrottle:"
-    "11.14.5.TrimWheel:"
-    "11.15.5.Throttle:"
-    "6.8.TrimSet:"
-    "6.9.ThrottleSet:"
-};
-*/
-
-/*
-const char configuration[] PROGMEM = 
-{   "9.2.3.2.3.0.StepperTrim:"
-    "3.4.enableTrim:"
+    "9.2.3.2.3.0.StepperTrim:"
     "9.5.6.5.6.0.StepperThrottle:"
-    "3.7.enableThrottle:"
-    "11.14.5.TrimWheel:"
-    "11.15.5.Throttle:"
-    "4.8.10.9.15.1.TrimSet:"
-    "4.11.13.12.15.1.ThrottleSet:"
-
-    "6.3.Servo"
 };
+
+/*
+    Stepper:    2 / 3   Trim Stepper
+    Output:     4       Trim enable
+    Stepper:    5 / 6   Throttle Stepper
+    Output:     7       Throttle enable
+    Button:     10      Trim Button sync lost
+    Button:     11      Throttle Button sync lost
+    Analog:     14      Trim Analog out
+    Analog:     15      Throttle Analog out
 */

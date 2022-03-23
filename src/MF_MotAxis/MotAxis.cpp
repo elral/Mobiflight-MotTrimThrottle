@@ -12,7 +12,7 @@ namespace MotAxis
     uint8_t MotAxisRegistered = 0;
     MFMotAxis *motaxis[MAX_MOTAXIS];
 
-    void Add(uint8_t analogPin)
+    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper)
     {
         if (MotAxisRegistered == MAX_MOTAXIS)
             return;
@@ -22,7 +22,7 @@ namespace MotAxis
             cmdMessenger.sendCmd(kStatus, F("Button does not fit in Memory"));
             return;
         }
-        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin);
+        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncButton, stepper);
 
         MotAxisRegistered++;
 #ifdef DEBUG2CMDMESSENGER

@@ -138,12 +138,12 @@ void readConfig()
             break;
 
         case kTypeLedSegment:
-            params[0] = readUintFromFlash(&addreeprom); // get the Pin Data number
-            params[1] = readUintFromFlash(&addreeprom); // get the Pin CS number
-            params[2] = readUintFromFlash(&addreeprom); // get the Pin CLK number
-            params[3] = readUintFromFlash(&addreeprom); // get the brightness
-            params[4] = readUintFromFlash(&addreeprom); // get the number of modules
-            MotAxis::Add();
+            params[0] = readUintFromFlash(&addreeprom); // get the registered analog Pin
+            params[1] = readUintFromFlash(&addreeprom); // get the registered sync lost button
+            params[2] = readUintFromFlash(&addreeprom); // get the registered stepper number
+            params[3] = readUintFromFlash(&addreeprom); // unused
+            params[4] = readUintFromFlash(&addreeprom); // unused
+            MotAxis::Add(params[0], params[1], params[2]);
             copy_success = readEndCommandFromFlash(&addreeprom); // check EEPROM until end of name
             break;
 
