@@ -7,5 +7,4 @@ void startPosition();
 void Clear();
 void update();
 void OnSetModule();
-int16_t GetSetpoint(uint8_t stepper);
 }

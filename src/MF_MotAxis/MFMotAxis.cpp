@@ -5,10 +5,10 @@
 
 MotAxisEvent MFMotAxis::_handler = NULL;
 
-MFMotAxis::MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, int16_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin)
+MFMotAxis::MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel)
 {
     _initialized = true;
-    _setPoint = startPosition;                                      // define center position
+    _setPoint = map(startPosition, 0, 100, -512, 511);              // define center position, comes in 0...100%, must be -512...511
     _synchronized = true;                                           // on startup we will move to start position
     _lastSync = 0;                                                  // for calculation of out of sync, this is time dependent
     _analogPin = analogPin;                                         // where to get the actual value from
@@ -17,10 +17,14 @@ MFMotAxis::MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, int
     _movingTime = movingTime;                                       // time for complete stroke in 1ms (0s to 25.5s)
     _maxSteps = maxSteps;                                           // number of steps for the complete stroke
     _enablePin = enablePin;                                         // output to en-/dis-able the stepper
+    _maxSpeed = maxSpeed;
+    _maxAccel = maxAccel;
 }
 
-void MFMotAxis::startPosition()
+void MFMotAxis::startPosition()                                     // this must be called after reading the config as it can not be ensured that all device are initialized when the constructor is called
 {
+    Stepper::setMaxSpeed(_stepper, _maxSpeed);
+    Stepper::setAcceleration(_stepper, _maxAccel);
     digitalWrite(_enablePin, 0);                                    // enable stepper for moving to center position
     uint32_t startCentering = millis();
     do {

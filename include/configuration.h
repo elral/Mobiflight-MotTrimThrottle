@@ -4,8 +4,8 @@ const char configuration[] PROGMEM =
     "3.7.enableThrottle:"
     "11.14.5.TrimWheel:"
     "11.15.5.Throttle:"
-    "4.0.0.0.4.0.TrimSet:"
-    "4.1.1.1.7.0.ThrottleSet:"
+    "4.0.0.0.4.50.TrimSet:"
+    "4.1.1.1.7.5.ThrottleSet:"
     "1.10.SyncLostTrim:"
     "1.11.SyncLostThrottle:"
     "9.2.3.2.3.0.StepperTrim:"
@@ -21,4 +21,18 @@ const char configuration[] PROGMEM =
     Button:     11      Throttle Button sync lost
     Analog:     14      Trim Analog out
     Analog:     15      Throttle Analog out
+
+    "4.0.0.0.4.50.TrimSet:"
+               ^
+               | Startposition in 0...100%
+              ^
+              | Pin number for enable stepper
+            ^
+            | stepper number
+         ^
+         | button number for sync lost
+       ^
+       | analog in number for actual value
+     ^
+     | Type 7Segment, is used for getting setpoint
 */

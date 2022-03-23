@@ -142,7 +142,7 @@ void readConfig()
             params[1] = readUintFromFlash(&addreeprom); // get the registered sync lost button
             params[2] = readUintFromFlash(&addreeprom); // get the registered stepper number
             params[3] = readUintFromFlash(&addreeprom); // get the enable Pin
-            params[4] = readUintFromFlash(&addreeprom); // not used
+            params[4] = readUintFromFlash(&addreeprom); // get the start position in 0...100% = -1000...0...1000
             MotAxis::Add(params[0], params[1], params[2], params[3], params[4]);
             copy_success = readEndCommandFromFlash(&addreeprom); // check EEPROM until end of name
             break;

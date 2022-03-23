@@ -15,7 +15,7 @@ extern "C"
 class MFMotAxis
 {
 public:
-    MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, int16_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin);
+    MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel);
     void startPosition();
     void detach();
     static void attachHandler(MotAxisEvent handler);    
@@ -40,4 +40,6 @@ private:
     uint16_t _movingTime;
     uint16_t _maxSteps;
     uint8_t _enablePin;
+    uint16_t _maxSpeed;
+    uint16_t _maxAccel;
 };
