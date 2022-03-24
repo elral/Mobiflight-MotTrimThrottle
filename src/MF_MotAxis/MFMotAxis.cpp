@@ -59,14 +59,14 @@ void MFMotAxis::update()
         _inMove = true;
         uint16_t accel = 1 + ((1000 - abs(_deltaSteps)) / 250);      // consider longer time for small steps due to acceleration
         _time2move = millis() + ((uint32_t)abs(_deltaSteps) * _movingTime * accel) / 900;  // 4 sec. from min to max (900 steps) in msec.
-Serial.print("Start Moving for corrected:"); Serial.println(_time2move - millis());
-Serial.print("Delta Steps: "); Serial.println(abs(_deltaSteps));
+//Serial.print("Start Moving for corrected:"); Serial.println(_time2move - millis());
+//Serial.print("Delta Steps: "); Serial.println(abs(_deltaSteps));
     }
 
     if (_time2move < millis() && _inMove)
     {
         _inMove = false;
-Serial.println("Stop moving");
+//Serial.println("Stop moving");
     }
 
     if (abs(_deltaSteps) < OUTOFSYNC_RANGE)                         // if actual value is near setpoint
