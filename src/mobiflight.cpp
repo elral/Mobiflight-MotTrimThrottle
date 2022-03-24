@@ -16,6 +16,13 @@
 #define OUTOFSYNC_RANGE 6               // if delta is below, then it's synced
 #define OUTOFSYNC_TIME 100              // min. time for out of sync detection, in ms
 
+// these defines should come from the connector, but how to handle this amount of parameters and exceeding uint8_t??
+#define MAXSTEPS            900     // number of steps for complete stroke
+#define MOVINGTIME          4000    // moving time for complete stroke in ms
+#define MAXSPEEDAXIS        600     // max. speed for the stepper, overrules MFBoard.h
+#define MAXACCELAXIS        800     // max. Accel. for the stepper, overrules MFBoard.h
+
+
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
 uint32_t lastButtonUpdate = 0;
@@ -86,7 +93,23 @@ void setup()
     attachCommandCallbacks();
     cmdMessenger.printLfCr();
     ResetBoard();
-    MotAxis::startPosition();
+// readconfig() in uncommented in Config.cppp
+// all required devices are added here
+// once MotAxis is a supported device, delete the following
+// and read the config via readconfig()
+    Output::Add(4);
+    Output::Add(7);
+    Analog::Add(14, "TrimWheel", 5);
+    Analog::Add(15, "Throttle", 5);
+    Button::Add(10, "SyncLostTrim");
+    Button::Add(11, "SyncLostThrottle");
+    MotAxis::Add(0, 0, 0, 4, 50, MOVINGTIME, MAXSTEPS, MAXSPEEDAXIS, MAXACCELAXIS);
+    MotAxis::Add(1, 1, 1, 7,  5, MOVINGTIME, MAXSTEPS, MAXSPEEDAXIS, MAXACCELAXIS);
+    Stepper::Add(2, 3, 2, 3, 0);
+    Stepper::Add(5, 6, 5, 6, 0);
+// delete up to here when MotAxis is a supported device
+
+    MotAxis::startPosition();                       // set all axis to start position
     // Time Gap between Inputs, do not read at the same loop
     lastButtonUpdate = millis() + 0;
     lastAnalogAverage = millis() + 4;

@@ -5,11 +5,13 @@
 #include "MFBoards.h"
 #include "allocateMem.h"
 
+/*
 // these defines should come from the connector, but how to handle this amount of parameters and exceeding uint8_t??
 #define MAXSTEPS            900     // number of steps for complete stroke
 #define MOVINGTIME          4000    // moving time for complete stroke in ms
 #define MAXSPEEDAXIS        600     // max. speed for the stepper, overrules MFBoard.h
 #define MAXACCELAXIS        800     // max. Accel. for the stepper, overrules MFBoard.h
+*/
 
 namespace MotAxis
 {
@@ -17,9 +19,9 @@ namespace MotAxis
     uint8_t MotAxisRegistered = 0;
     MFMotAxis *motaxis[MAX_MOTAXIS];
 
-//    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition,
-//             uint16_t movingTime=MOVINGTIME, uint16_t maxSteps=MAXSTEPS, uint16_t maxSpeed=MAXSPEEDAXIS, uint16_t maxAccel=MAXACCELAXIS)
-    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition)
+    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition,
+             uint16_t movingTime, uint16_t maxSteps, uint16_t maxSpeed, uint16_t maxAccel)
+//    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition)
     {
         if (MotAxisRegistered == MAX_MOTAXIS)
             return;
@@ -28,7 +30,8 @@ namespace MotAxis
             cmdMessenger.sendCmd(kStatus, F("Button does not fit in Memory"));
             return;
         }
-        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncButton, stepper, startPosition, MOVINGTIME, MAXSTEPS, enablePin, MAXSPEEDAXIS, MAXACCELAXIS);
+//        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncButton, stepper, startPosition, MOVINGTIME, MAXSTEPS, enablePin, MAXSPEEDAXIS, MAXACCELAXIS);
+        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncButton, stepper, startPosition, movingTime, maxSteps, enablePin, maxSpeed, maxAccel);
         MotAxisRegistered++;
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Added Stepper Setpoint"));
