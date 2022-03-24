@@ -19,7 +19,7 @@
 
 #define MOBIFLIGHT_TYPE         "MotAxis Nano"
 #define MOBIFLIGHT_SERIAL       "0987654321"
-#define MOBIFLIGHT_NAME         "MobiFlight Nano"
+#define MOBIFLIGHT_NAME         "Mobiflight Nano"
 #define EEPROM_SIZE             1024    // EEPROMSizeNano
 #define MEMLEN_CONFIG           286     // max. size for config which wil be stored in EEPROM
 #define MEMLEN_CONFIG_BUFFER    220     // max. size for configBuffer, contains only names from inputs

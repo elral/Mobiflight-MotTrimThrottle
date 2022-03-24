@@ -16,11 +16,15 @@
     "ForceResetOnFirmwareUpdate": false,
     "MessageSize": 32
   },
-  "HardwareIds": [ "^VID_2341&PID_0043", "^VID_2A03&PID_0043", "^VID_2341&PID_0243" ],
+  "HardwareIds": [
+    "^VID_2341&PID_0043",
+    "^VID_2A03&PID_0043",
+    "^VID_2341&PID_0243"
+  ],
   "Info": {
     "CanInstallFirmware": false,
     "FriendlyName": "Arduino Mini",
-    "LatestFirmwareVersion": "0.0.1",
+    "LatestFirmwareVersion": "2.1.0",
     "MobiFlightType": "MotAxis Mini"
   },
   "ModuleLimits": {

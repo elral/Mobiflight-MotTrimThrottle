@@ -33,7 +33,7 @@
   ],
   "Info": {
     "CanInstallFirmware": true,
-    "LatestFirmwareVersion": "0.0.1",
+    "LatestFirmwareVersion": "2.1.0",
     "FriendlyName": "Arduino Mega 2560",
     "MobiFlightType": "MotAxis Mega"
   },
