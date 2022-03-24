@@ -14,7 +14,7 @@
 // The build version comes from an environment variable
 #define STRINGIZER(arg) #arg
 #define STR_VALUE(arg) STRINGIZER(arg)
-#define VERSION "2.0.1" // STR_VALUE(BUILD_VERSION)
+#define VERSION "2.1.0" // STR_VALUE(BUILD_VERSION)
 
 MFEEPROM MFeeprom;
 
