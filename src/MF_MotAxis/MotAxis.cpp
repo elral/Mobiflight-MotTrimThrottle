@@ -17,8 +17,9 @@ namespace MotAxis
     uint8_t MotAxisRegistered = 0;
     MFMotAxis *motaxis[MAX_MOTAXIS];
 
-    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition,
-             uint16_t movingTime=MOVINGTIME, uint16_t maxSteps=MAXSTEPS, uint16_t maxSpeed=MAXSPEEDAXIS, uint16_t maxAccel=MAXACCELAXIS)
+//    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition,
+//             uint16_t movingTime=MOVINGTIME, uint16_t maxSteps=MAXSTEPS, uint16_t maxSpeed=MAXSPEEDAXIS, uint16_t maxAccel=MAXACCELAXIS)
+    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition)
     {
         if (MotAxisRegistered == MAX_MOTAXIS)
             return;
