@@ -16,7 +16,7 @@
 #define STEPPER_SPEED 400 // 300 already worked, 467, too?
 #define STEPPER_ACCEL 800
 
-#define MOBIFLIGHT_TYPE         "MotTrimThrot Mega"
+#define MOBIFLIGHT_TYPE         "MotAxis Mega"
 #define MOBIFLIGHT_SERIAL       "1234567890"
 #define MOBIFLIGHT_NAME         "MobiFlight Mega"
 #define EEPROM_SIZE             4096    // EEPROMSizeMega

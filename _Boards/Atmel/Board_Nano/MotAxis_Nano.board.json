@@ -4,7 +4,7 @@
     "Device": "atmega328p",
     "BaudRate": "115200",
     "Programmer": "arduino",
-    "FirmwareBaseName": "mottrimthrot_nano",
+    "FirmwareBaseName": "motaxis_nano",
     "Timeout": 15000
   },
   "Connection": {
@@ -21,7 +21,7 @@
     "CanInstallFirmware": true,
     "FriendlyName": "Arduino Nano",
     "LatestFirmwareVersion": "0.0.1",
-    "MobiFlightType": "MotTrimThrot Nano"
+    "MobiFlightType": "MotAxis Nano"
   },
   "ModuleLimits": {
     "MaxAnalogInputs": 3,

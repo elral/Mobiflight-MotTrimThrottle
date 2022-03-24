@@ -3,7 +3,7 @@
   "AvrDudeSettings": {
     "BaudRate": "57600",
     "Device": "atmega32u4",
-    "FirmwareBaseName": "mottrimthrot_micro",
+    "FirmwareBaseName": "motaxis_micro",
     "Programmer": "avr109",
     "Timeout": 15000
   },
@@ -25,7 +25,7 @@
     "CanInstallFirmware": true,
     "FriendlyName": "Arduino Micro Pro",
     "LatestFirmwareVersion": "0.0.1",
-    "MobiFlightType": "MotTrimThrot Micro"
+    "MobiFlightType": "MotAxis Micro"
   },
   "ModuleLimits": {
     "MaxAnalogInputs": 5,

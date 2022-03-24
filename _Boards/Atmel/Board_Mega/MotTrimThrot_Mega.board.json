@@ -4,7 +4,7 @@
     "Device": "atmega2560",
     "BaudRate": "115200",
     "Programmer": "wiring",
-    "FirmwareBaseName": "mottrimthrot_mega",
+    "FirmwareBaseName": "motaxis_mega",
     "Timeout": 15000
   },
   "Connection": {
@@ -33,10 +33,9 @@
   ],
   "Info": {
     "CanInstallFirmware": true,
-    "DelayAfterFirmwareUpdate": 0,
     "LatestFirmwareVersion": "0.0.1",
     "FriendlyName": "Arduino Mega 2560",
-    "MobiFlightType": "MotTrimThrot Mega"
+    "MobiFlightType": "MotAxis Mega"
   },
   "ModuleLimits": {
     "MaxAnalogInputs": 16,
