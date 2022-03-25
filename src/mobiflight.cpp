@@ -116,7 +116,7 @@ void setup()
     MotAxis::Add(analogPin, "SyncLostThrottle", stepperNumber, outputPin, STARTPOSITION_THROTTLE, MOVINGTIME_THROTTLE, MAXSTEPS_THROTTLE, MAXSPEEDAXIS_THROTTLE, MAXACCELAXIS_THROTTLE);
 // delete up to here when MotAxis is a supported device
 
-    MotAxis::startPosition();                       // set all axis to start position
+    MotAxis::startPosition();                               // set all axis to start position
     // Time Gap between Inputs, do not read at the same loop
     lastButtonUpdate = millis() + 0;
     lastAnalogAverage = millis() + 4;
@@ -137,8 +137,6 @@ void loop()
     if (getStatusConfig()) {
         if (millis() - lastButtonUpdate >= MF_BUTTON_DEBOUNCE_MS) {
             lastButtonUpdate = millis();
-    //        Button::read();   Button 0 and 1 is simulated lost of sync, must not be read in as it gots wrong status
-    // maybe better not to read in via loadconfig()??
         }
         if (millis() - lastAnalogRead >= MF_ANALOGREAD_DELAY_MS) {
             lastAnalogRead = millis();
