@@ -1,18 +1,22 @@
 #include "MFMotAxis.h"
 #include "Analog.h"
 #include "Stepper.h"
-#include "Button.h"
+//#include "Button.h"
 
 MotAxisEvent MFMotAxis::_handler = NULL;
 
-MFMotAxis::MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel)
+MFMotAxis::MFMotAxis(uint8_t analogPin, const char *syncName, uint8_t stepper, uint8_t startPosition,
+                     uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel)
+//MFMotAxis::MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t startPosition,
+//                     uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel)
 {
     _initialized = true;
     _setPoint = map(startPosition, 0, 100, -512, 511);              // define center position, comes in 0...100%, must be -512...511
     _synchronized = true;                                           // on startup we will move to start position
     _lastSync = 0;                                                  // for calculation of out of sync, this is time dependent
     _analogPin = analogPin;                                         // where to get the actual value from
-    _syncButton = syncButton;                                       // button on which out of sync is reported
+    //_syncButton = syncButton;                                       // button on which out of sync is reported
+    _syncName = syncName;                                           // button name on which out of sync is reported
     _stepper = stepper;                                             // which stepper has to be moved
     _movingTime = movingTime;                                       // time for complete stroke in 1ms (0s to 25.5s)
     _maxSteps = maxSteps;                                           // number of steps for the complete stroke
@@ -77,7 +81,10 @@ void MFMotAxis::update()
     } else if (millis() - _lastSync >= OUTOFSYNC_TIME && _synchronized == true && !_inMove)
     {
         _synchronized = false;
-        Button::press(_syncButton);                                 // simulate button press, is button release required for the connector?
+    //    Button::press(_syncButton);                                 // simulate button press, is button release required for the connector?
+        if (_handler) {
+            (*_handler)(btnOnPress, /*_syncButton,*/ _syncName);
+        }
     }
 }
 
@@ -91,3 +98,7 @@ int16_t MFMotAxis::getSetpoint()
     return _setPoint;
 }
 
+void MFMotAxis::attachHandler(MotAxisEvent newHandler)
+{
+    _handler = newHandler;
+}

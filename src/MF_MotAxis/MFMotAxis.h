@@ -8,14 +8,20 @@
 extern "C"
 {
   // callback functions
-  typedef void (*MotAxisEvent) (int, uint8_t, const char *);
+  typedef void (*MotAxisEvent) (int, /*uint8_t,*/ const char *);
 };
 
+enum
+{
+  btnOnPress,
+  btnOnRelease,
+};
 
 class MFMotAxis
 {
 public:
-    MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel);
+    //MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel);
+    MFMotAxis(uint8_t analogPin, const char *syncName, uint8_t stepper, uint8_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel);
     void startPosition();
     void detach();
     static void attachHandler(MotAxisEvent handler);    
@@ -28,7 +34,8 @@ private:
     bool _initialized = false;
     int16_t _setPoint;
     uint8_t _analogPin;
-    uint8_t _syncButton;
+    //uint8_t _syncButton;
+    const char *_syncName;
     uint8_t _stepper;
     int16_t _actualValue;
     int16_t _deltaSteps;

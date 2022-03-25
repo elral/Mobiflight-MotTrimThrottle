@@ -5,19 +5,19 @@
 #include "MFBoards.h"
 #include "allocateMem.h"
 
-/*
-// these defines should come from the connector, but how to handle this amount of parameters and exceeding uint8_t??
-#define MAXSTEPS            900     // number of steps for complete stroke
-#define MOVINGTIME          4000    // moving time for complete stroke in ms
-#define MAXSPEEDAXIS        600     // max. speed for the stepper, overrules MFBoard.h
-#define MAXACCELAXIS        800     // max. Accel. for the stepper, overrules MFBoard.h
-*/
 
 namespace MotAxis
 {
-
     uint8_t MotAxisRegistered = 0;
     MFMotAxis *motaxis[MAX_MOTAXIS];
+
+    void handlerOnMotaxis(uint8_t eventId,/* uint8_t pin,*/ const char *name)
+    {
+        cmdMessenger.sendCmdStart(kButtonChange);
+        cmdMessenger.sendCmdArg(name);
+        cmdMessenger.sendCmdArg(eventId);
+        cmdMessenger.sendCmdEnd();
+    };
 
     void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition,
              uint16_t movingTime, uint16_t maxSteps, uint16_t maxSpeed, uint16_t maxAccel)
@@ -32,6 +32,7 @@ namespace MotAxis
         }
 //        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncButton, stepper, startPosition, MOVINGTIME, MAXSTEPS, enablePin, MAXSPEEDAXIS, MAXACCELAXIS);
         motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncButton, stepper, startPosition, movingTime, maxSteps, enablePin, maxSpeed, maxAccel);
+        motaxis[MotAxisRegistered]->attachHandler(handlerOnMotaxis);
         MotAxisRegistered++;
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Added Stepper Setpoint"));
