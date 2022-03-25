@@ -22,12 +22,12 @@ namespace Analog
     uint8_t Add(uint8_t pin = 1, char const *name = "AnalogInput", uint8_t sensitivity = 3)
     {
         if (analogRegistered == MAX_ANALOG_INPUTS)
-            return;
+            return 0;
 
         if (!FitInMemory(sizeof(MFAnalog))) {
             // Error Message to Connector
             cmdMessenger.sendCmd(kStatus, F("AnalogIn does not fit in Memory"));
-            return;
+            return 0;
         }
         analog[analogRegistered] = new (allocateMemory(sizeof(MFAnalog))) MFAnalog(pin, name, sensitivity);
         analog[analogRegistered]->attachHandler(handlerOnAnalogChange);
