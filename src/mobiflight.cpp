@@ -17,10 +17,16 @@
 #define OUTOFSYNC_TIME 100              // min. time for out of sync detection, in ms
 
 // these defines should come from the connector, but how to handle this amount of parameters and exceeding uint8_t??
-#define MAXSTEPS            900     // number of steps for complete stroke
-#define MOVINGTIME          4000    // moving time for complete stroke in ms
-#define MAXSPEEDAXIS        600     // max. speed for the stepper, overrules MFBoard.h
-#define MAXACCELAXIS        800     // max. Accel. for the stepper, overrules MFBoard.h
+#define MAXSTEPS_TRIM           900     // number of steps for complete stroke
+#define MOVINGTIME_TRIM         4000    // moving time for complete stroke in ms
+#define MAXSPEEDAXIS_TRIM       600     // max. speed for the stepper, overrules MFBoard.h
+#define MAXACCELAXIS_TRIM       800     // max. Accel. for the stepper, overrules MFBoard.h
+#define STARTPOSITION_TRIM      50      // start position in 0...100%
+#define MAXSTEPS_THROTTLE       900     // number of steps for complete stroke
+#define MOVINGTIME_THROTTLE     4000    // moving time for complete stroke in ms
+#define MAXSPEEDAXIS_THROTTLE   600     // max. speed for the stepper, overrules MFBoard.h
+#define MAXACCELAXIS_THROTTLE   800     // max. Accel. for the stepper, overrules MFBoard.h
+#define STARTPOSITION_THROTTLE  5       // start position in 0...100%
 
 
 bool powerSavingMode = false;
@@ -102,12 +108,12 @@ void setup()
     uint8_t outputPin =  Output::Add(4);
     uint8_t analogPin = Analog::Add(14, "TrimWheel", 5);
     uint8_t stepperNumber = Stepper::Add(2, 3, 2, 3, 0);
-    MotAxis::Add(analogPin, "SyncLostTrim", stepperNumber, outputPin, 50, MOVINGTIME, MAXSTEPS, MAXSPEEDAXIS, MAXACCELAXIS);
+    MotAxis::Add(analogPin, "SyncLostTrim", stepperNumber, outputPin, STARTPOSITION_TRIM, MOVINGTIME_TRIM, MAXSTEPS_TRIM, MAXSPEEDAXIS_TRIM, MAXACCELAXIS_TRIM);
 
     outputPin = Output::Add(7);
     analogPin = Analog::Add(15, "Throttle", 5);
     stepperNumber = Stepper::Add(5, 6, 5, 6, 0);
-    MotAxis::Add(analogPin, "SyncLostThrottle", stepperNumber, outputPin,  5, MOVINGTIME, MAXSTEPS, MAXSPEEDAXIS, MAXACCELAXIS);
+    MotAxis::Add(analogPin, "SyncLostThrottle", stepperNumber, outputPin, STARTPOSITION_THROTTLE, MOVINGTIME_THROTTLE, MAXSTEPS_THROTTLE, MAXSPEEDAXIS_THROTTLE, MAXACCELAXIS_THROTTLE);
 // delete up to here when MotAxis is a supported device
 
     MotAxis::startPosition();                       // set all axis to start position
