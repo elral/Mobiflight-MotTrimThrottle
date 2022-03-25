@@ -93,20 +93,21 @@ void setup()
     attachCommandCallbacks();
     cmdMessenger.printLfCr();
     ResetBoard();
+
 // readconfig() in uncommented in Config.cppp
 // all required devices are added here
 // once MotAxis is a supported device, delete the following
 // and read the config via readconfig()
-    Output::Add(4);
-    Output::Add(7);
-    Analog::Add(14, "TrimWheel", 5);
-    Analog::Add(15, "Throttle", 5);
-    Button::Add(10, "SyncLostTrim");
-    Button::Add(11, "SyncLostThrottle");
-    MotAxis::Add(0, 0, 0, 4, 50, MOVINGTIME, MAXSTEPS, MAXSPEEDAXIS, MAXACCELAXIS);
-    MotAxis::Add(1, 1, 1, 7,  5, MOVINGTIME, MAXSTEPS, MAXSPEEDAXIS, MAXACCELAXIS);
-    Stepper::Add(2, 3, 2, 3, 0);
-    Stepper::Add(5, 6, 5, 6, 0);
+
+    uint8_t outputPin =  Output::Add(4);
+    uint8_t analogPin = Analog::Add(14, "TrimWheel", 5);
+    uint8_t stepperNumber = Stepper::Add(2, 3, 2, 3, 0);
+    MotAxis::Add(analogPin, "SyncLostTrim", stepperNumber, outputPin, 50, MOVINGTIME, MAXSTEPS, MAXSPEEDAXIS, MAXACCELAXIS);
+
+    outputPin = Output::Add(7);
+    analogPin = Analog::Add(15, "Throttle", 5);
+    stepperNumber = Stepper::Add(5, 6, 5, 6, 0);
+    MotAxis::Add(analogPin, "SyncLostThrottle", stepperNumber, outputPin,  5, MOVINGTIME, MAXSTEPS, MAXSPEEDAXIS, MAXACCELAXIS);
 // delete up to here when MotAxis is a supported device
 
     MotAxis::startPosition();                       // set all axis to start position

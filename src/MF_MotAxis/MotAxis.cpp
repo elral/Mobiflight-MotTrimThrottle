@@ -19,9 +19,8 @@ namespace MotAxis
         cmdMessenger.sendCmdEnd();
     };
 
-    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition,
+    void Add(uint8_t analogPin, const char *syncName, uint8_t stepper, uint8_t enablePin, uint8_t startPosition,
              uint16_t movingTime, uint16_t maxSteps, uint16_t maxSpeed, uint16_t maxAccel)
-//    void Add(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t enablePin, uint8_t startPosition)
     {
         if (MotAxisRegistered == MAX_MOTAXIS)
             return;
@@ -30,8 +29,7 @@ namespace MotAxis
             cmdMessenger.sendCmd(kStatus, F("Button does not fit in Memory"));
             return;
         }
-//        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncButton, stepper, startPosition, MOVINGTIME, MAXSTEPS, enablePin, MAXSPEEDAXIS, MAXACCELAXIS);
-        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncButton, stepper, startPosition, movingTime, maxSteps, enablePin, maxSpeed, maxAccel);
+        motaxis[MotAxisRegistered] = new (allocateMemory(sizeof(MFMotAxis))) MFMotAxis(analogPin, syncName, stepper, startPosition, movingTime, maxSteps, enablePin, maxSpeed, maxAccel);
         motaxis[MotAxisRegistered]->attachHandler(handlerOnMotaxis);
         MotAxisRegistered++;
 #ifdef DEBUG2CMDMESSENGER

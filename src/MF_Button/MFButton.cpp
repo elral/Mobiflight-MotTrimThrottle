@@ -6,8 +6,7 @@ MFButton::MFButton(uint8_t pin, const char *name)
 {
     _pin = pin;
     _name = name;
-    //_state = 1;
-    _state = LOW;
+    _state = 1;
     pinMode(_pin, INPUT_PULLUP); // set pin to input
 }
 
@@ -27,16 +26,14 @@ void MFButton::trigger(uint8_t state)
 
 void MFButton::triggerOnPress()
 {
-    //if (_handler && _state == LOW) {
-    if (_handler) {
+    if (_handler && _state == LOW) {
         (*_handler)(btnOnPress, _pin, _name);
     }
 }
 
 void MFButton::triggerOnRelease()
 {
-    //if (_handler && _state == HIGH) {
-    if (_handler) {
+    if (_handler && _state == HIGH) {
         (*_handler)(btnOnRelease, _pin, _name);
     }
 }

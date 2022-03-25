@@ -53,18 +53,6 @@ namespace Button
         }
     }
 
-    void press(uint8_t button)
-    {
-        if (button < buttonsRegistered)
-            buttons[button]->triggerOnPress();
-    }
-
-    void release(uint8_t button)
-    {
-        if (button < buttonsRegistered)
-            buttons[button]->triggerOnRelease();
-    }
-
     void OnTrigger()
     {
         // Trigger all button release events first...

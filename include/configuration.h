@@ -8,8 +8,8 @@ const char configuration[] PROGMEM =
     "4.1.1.1.7.5.ThrottleSet:"
     "1.10.SyncLostTrim:"
     "1.11.SyncLostThrottle:"
-    "9.2.3.2.3.0.StepperTrim:"
-    "9.5.6.5.6.0.StepperThrottle:"
+//    "9.2.3.2.3.0.StepperTrim:"
+//    "9.5.6.5.6.0.StepperThrottle:"
 };
 
 /*

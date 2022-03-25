@@ -12,15 +12,15 @@ namespace Stepper
     MFStepper *steppers[MAX_STEPPERS];
     uint8_t steppersRegistered = 0;
 
-    void Add(int pin1, int pin2, int pin3, int pin4, int btnPin1)
+    uint8_t Add(int pin1, int pin2, int pin3, int pin4, int btnPin1)
     {
         if (steppersRegistered == MAX_STEPPERS)
-            return;
+            return 0;
 
         if (!FitInMemory(sizeof(MFStepper))) {
             // Error Message to Connector
             cmdMessenger.sendCmd(kStatus, F("Stepper does not fit in Memory!"));
-            return;
+            return 0;
         }
         steppers[steppersRegistered] = new (allocateMemory(sizeof(MFStepper))) MFStepper;
         steppers[steppersRegistered]->attach(pin1, pin2, pin3, pin4, btnPin1);
@@ -38,6 +38,7 @@ namespace Stepper
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Added stepper"));
 #endif
+        return (steppersRegistered - 1);
     }
 
     void Clear()

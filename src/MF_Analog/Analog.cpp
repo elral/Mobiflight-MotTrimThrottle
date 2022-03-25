@@ -19,7 +19,7 @@ namespace Analog
         cmdMessenger.sendCmdEnd();
     };
 
-    void Add(uint8_t pin = 1, char const *name = "AnalogInput", uint8_t sensitivity = 3)
+    uint8_t Add(uint8_t pin = 1, char const *name = "AnalogInput", uint8_t sensitivity = 3)
     {
         if (analogRegistered == MAX_ANALOG_INPUTS)
             return;
@@ -35,6 +35,7 @@ namespace Analog
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Added analog device "));
 #endif
+        return (analogRegistered - 1);
     }
 
     void Clear()

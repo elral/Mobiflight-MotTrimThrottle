@@ -8,7 +8,7 @@
 extern "C"
 {
   // callback functions
-  typedef void (*MotAxisEvent) (int, /*uint8_t,*/ const char *);
+  typedef void (*MotAxisEvent) (uint8_t, /*uint8_t,*/ const char *);
 };
 
 enum
@@ -20,7 +20,6 @@ enum
 class MFMotAxis
 {
 public:
-    //MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel);
     MFMotAxis(uint8_t analogPin, const char *syncName, uint8_t stepper, uint8_t startPosition, uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel);
     void startPosition();
     void detach();

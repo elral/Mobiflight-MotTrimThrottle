@@ -12,21 +12,22 @@ namespace Output
     MFOutput *outputs[MAX_OUTPUTS];
     uint8_t outputsRegistered = 0;
 
-    void Add(uint8_t pin = 1)
+    uint8_t Add(uint8_t pin = 1)
     {
         if (outputsRegistered == MAX_OUTPUTS)
-            return;
+            return 0;
 
         if (!FitInMemory(sizeof(MFOutput))) {
             // Error Message to Connector
             cmdMessenger.sendCmd(kStatus, F("Output does not fit in Memory"));
-            return;
+            return 0;
         }
         outputs[outputsRegistered] = new (allocateMemory(sizeof(MFOutput))) MFOutput(pin);
         outputsRegistered++;
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kStatus, F("Added output"));
 #endif
+    return pin;
     }
 
     void Clear()

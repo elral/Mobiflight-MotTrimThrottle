@@ -1,14 +1,11 @@
 #include "MFMotAxis.h"
 #include "Analog.h"
 #include "Stepper.h"
-//#include "Button.h"
 
 MotAxisEvent MFMotAxis::_handler = NULL;
 
 MFMotAxis::MFMotAxis(uint8_t analogPin, const char *syncName, uint8_t stepper, uint8_t startPosition,
                      uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel)
-//MFMotAxis::MFMotAxis(uint8_t analogPin, uint8_t syncButton, uint8_t stepper, uint8_t startPosition,
-//                     uint16_t movingTime, uint16_t maxSteps, uint8_t enablePin, uint16_t maxSpeed, uint16_t maxAccel)
 {
     _initialized = true;
     _setPoint = map(startPosition, 0, 100, -512, 511);              // define center position, comes in 0...100%, must be -512...511
@@ -23,26 +20,28 @@ MFMotAxis::MFMotAxis(uint8_t analogPin, const char *syncName, uint8_t stepper, u
     _enablePin = enablePin;                                         // output to en-/dis-able the stepper
     _maxSpeed = maxSpeed;
     _maxAccel = maxAccel;
+    pinMode(_enablePin, OUTPUT);
+    digitalWrite(_enablePin, 1);                                    // disable stepper on startup
 }
 
 void MFMotAxis::startPosition()                                     // this must be called after reading the config as it can not be ensured that all device are initialized when the constructor is called
 {
     Stepper::setMaxSpeed(_stepper, _maxSpeed);
     Stepper::setAcceleration(_stepper, _maxAccel);
-    digitalWrite(_enablePin, 0);                                    // enable stepper for moving to center position
-    uint32_t startCentering = millis();
+    digitalWrite(_enablePin, 0);                                    // enable stepper for moving to start position
+    uint32_t startCentering = millis();                             // move to start position must be within defined time
     do {
         Analog::readAverage();                                      // read analog and calculate floating average
         _actualValue = Analog::getActualValue(_analogPin);          // range is -512 ... 511 for 270°
         _deltaSteps = _setPoint - _actualValue;                     // Stepper: 800 steps for 360° -> 600 steps for 270°
         Stepper::SetRelative(_stepper, _deltaSteps / 2);            // Accellib has it's own PID controller, so handles acceleration and max. speed by itself
         Stepper::update();                                          // ensure stepper is moving
-        if (millis() - startCentering > _movingTime)                // do not move to center position forever, must be within max. moving time
+        if (millis() - startCentering > _movingTime)                // do not move to start position forever, must be within max. moving time
         {
             _synchronized = false;                                  // in this case we are not synchronized
-            break;                                                  // centering must be within 3 sec in case one analog in is not connected
+            break;                                                  // reaching start position must be within defined time in case analogIn is not connected
         }   
-    } while (abs(_deltaSteps) > 5);                                 // on startup center Axis
+    } while (abs(_deltaSteps) > 5);                                 // on startup move to start position of Axis
     digitalWrite(_enablePin, 1);                                    // disable stepper on startup
 }
 
