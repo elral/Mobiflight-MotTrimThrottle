@@ -9,6 +9,7 @@
 #define MAX_OUTPUTS 18
 #define MAX_BUTTONS 18
 #define MAX_STEPPER_SETPOINT 1
+#define MAX_MOTAXIS 2
 #define MAX_STEPPERS 3
 #define MAX_ANALOG_INPUTS 5
 
