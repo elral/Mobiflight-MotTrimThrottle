@@ -146,11 +146,13 @@ void loop()
             lastAnalogAverage = millis();
             Analog::readAverage();
         }
-        MotAxis::update();                                  // must be called as often as poosible to update closed loop control
-        Stepper::update();                                  // must be called as often as poosible to move the stepper
+        MotAxis::update();                                  // must be called as often as possible to update closed loop control
+        Stepper::update();                                  // must be called as often as possible to move the stepper
     }
 }
 
+
+// Hints for manual control via serial terminal
 // 1,0,0,12345678,255;  Modul 0 = setpoint TrimWheel -> LedSegment::GetSetpoint(0)
 // 1,1,0,12345678,255;  Modul 1 = setpoint Throttle  -> LedSegment::GetSetpoint(1)
 // 3,0,800;             Stepper 0 relative  Stepper::OnSetRelative() gets still valie from CMDMessenger!! additional function required to keep receiving from UI??
