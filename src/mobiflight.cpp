@@ -100,7 +100,7 @@ void setup()
     cmdMessenger.printLfCr();
     ResetBoard();
 
-// readconfig() in uncommented in Config.cppp
+// readconfig() is uncommented in Config.cppp
 // all required devices are added here
 // once MotAxis is a supported device, delete the following
 // and read the config via readconfig()
