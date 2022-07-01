@@ -36,3 +36,22 @@ const char configuration[] PROGMEM =
      ^
      | Type 7Segment, is used for getting setpoint
 */
+
+struct Key {
+    uint8_t pin;
+    char *name;
+};
+struct Out {
+  uint8_t pin;
+  char *name;
+};
+
+const Key key[] PROGMEM = {
+  10, "SyncLostTrim",
+  11, "SyncLostWheel"
+};
+
+const Out out[] PROGMEM = {
+  4, "enableTrim",
+  7, "enableThrottle"
+};
